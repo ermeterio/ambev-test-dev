@@ -1,18 +1,15 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System.Reflection;
 
 namespace Ambev.DeveloperEvaluation.ORM;
 
-public class DefaultContext : DbContext
+public class DefaultContext(DbContextOptions<DefaultContext> options) : DbContext(options)
 {
-    public DbSet<User> Users { get; set; }
-
-    public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
-    {
-    }
+    public DbSet<User>? Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,12 +17,15 @@ public class DefaultContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 }
-public class YourDbContextFactory : IDesignTimeDbContextFactory<DefaultContext>
+public class DefaultContextFactory : IDesignTimeDbContextFactory<DefaultContext>
 {
     public DefaultContext CreateDbContext(string[] args)
     {
-        IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+        var pathAssembly =
+            $"{Directory.GetParent(Directory.GetCurrentDirectory())!.FullName}\\Ambev.DeveloperEvaluation.WebApi";
+
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(pathAssembly)
             .AddJsonFile("appsettings.json")
             .Build();
 
@@ -34,7 +34,11 @@ public class YourDbContextFactory : IDesignTimeDbContextFactory<DefaultContext>
 
         builder.UseNpgsql(
                connectionString,
-               b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.WebApi")
+               b =>
+               {
+                   b.MigrationsAssembly(GetType().Assembly.GetName().Name);
+                   b.EnableRetryOnFailure();
+               }
         );
 
         return new DefaultContext(builder.Options);
