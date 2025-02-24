@@ -4,10 +4,12 @@ using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
+using Ambev.DeveloperEvaluation.MongoDB;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -35,6 +37,13 @@ public class Program
                     b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
                 )
             );
+
+            var mongoSettings = builder.Configuration.GetSection("MongoDBSettings").Get<MongoDbSettings>();
+            if (mongoSettings is not null)
+            {
+                builder.Services.AddSingleton(mongoSettings);
+                builder.Services.AddSingleton<IMongoClient, MongoClient>(sp => new MongoClient(mongoSettings.ConnectionString));
+            }
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
 

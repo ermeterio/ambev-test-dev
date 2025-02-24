@@ -4,12 +4,19 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.Reflection;
+using Ambev.DeveloperEvaluation.Domain.Entities.Company;
+using Ambev.DeveloperEvaluation.Domain.Entities.Product;
+using Ambev.DeveloperEvaluation.Domain.Entities.Sale;
 
 namespace Ambev.DeveloperEvaluation.ORM;
 
 public class DefaultContext(DbContextOptions<DefaultContext> options) : DbContext(options)
 {
     public DbSet<User>? Users { get; set; }
+    public DbSet<Sale>? Sales { get; set; }
+    public DbSet<Product>? Products { get; set; }
+    public DbSet<Company>? Companies { get; set; }
+    public DbSet<ProductHistory>? ProductHistories { get; set; }    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

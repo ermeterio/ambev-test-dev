@@ -8,7 +8,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Product
         public decimal Price { get; set; }
         public Guid CategoryId { get; set; }
         public Category? Category { get; set; }
-        public string Image { get; set; } = string.Empty;
+        public ProductImage? Image { get; set; } 
         public string Description { get; set; } = string.Empty;
+        public int ActualStock { get; set; }
     }
 }

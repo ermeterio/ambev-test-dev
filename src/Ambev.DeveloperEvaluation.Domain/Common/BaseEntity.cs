@@ -1,11 +1,15 @@
 ﻿using System.Security.Cryptography;
 using Ambev.DeveloperEvaluation.Common.Validation;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Ambev.DeveloperEvaluation.Domain.Common;
 
 public class BaseEntity : IComparable<BaseEntity>
 {
-    public Guid Id { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     public Task<IEnumerable<ValidationErrorDetail>> ValidateAsync()
     {
