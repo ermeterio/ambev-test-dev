@@ -23,6 +23,12 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Property(p => p.CompanyId).IsRequired();
+            builder.HasOne(p => p.Company)
+                .WithMany()
+                .HasForeignKey(p => p.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
