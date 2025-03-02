@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Base.Delete;
 
-public class BaseDeleteRequestValidator : AbstractValidator<DeleteUserRequest>
+public class BaseDeleteRequestValidator : AbstractValidator<BaseDeleteRequest>
 {
     /// <summary>
     /// Initializes validation rules for DeleteRequest

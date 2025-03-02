@@ -11,7 +11,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Sale
         public User.User? User { get; set; }
         public string Code => GenerateShortGuid();
         public IReadOnlyCollection<SaleDiscount>? Discounts { get; set; }
-        public IReadOnlyCollection<SaleItem>? Products { get; set; }
+        public IReadOnlyCollection<SaleItem>? Items { get; set; }
         public SaleStatus Status { get; set; }
     }
 }

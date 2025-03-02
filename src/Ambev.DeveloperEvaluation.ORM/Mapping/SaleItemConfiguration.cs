@@ -16,7 +16,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
             builder.Property(sd => sd.SaleId).IsRequired().HasMaxLength(36);
 
             builder.HasOne(s => s.Sale)
-                .WithMany(s => s.Products)
+                .WithMany(s => s.Items)
                 .HasForeignKey(s => s.SaleId)
                 .OnDelete(DeleteBehavior.Cascade);
 

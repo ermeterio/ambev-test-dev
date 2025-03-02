@@ -18,7 +18,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
 
             builder.Property(s => s.Status).IsRequired();
             builder.HasMany(s => s.Discounts).WithOne().HasForeignKey(s => s.SaleId);
-            builder.HasMany(s => s.Products).WithOne().HasForeignKey(s => s.SaleId);
+            builder.HasMany(s => s.Items).WithOne().HasForeignKey(s => s.SaleId);
 
             builder.Property(s => s.CompanyId).IsRequired().HasMaxLength(36);
             builder.HasOne(s => s.Company)
