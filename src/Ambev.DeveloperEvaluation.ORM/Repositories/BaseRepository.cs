@@ -34,7 +34,8 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
 
         public async Task DeleteAsync(T entity)
         {
-            DbSet.Remove(entity);
+            entity.IsDeleted = true;
+            DbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
     }

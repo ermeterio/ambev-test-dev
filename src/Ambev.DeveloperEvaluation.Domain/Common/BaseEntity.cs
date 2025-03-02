@@ -10,6 +10,8 @@ public class BaseEntity : IComparable<BaseEntity>
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public Guid Id { get; set; } = Guid.NewGuid();
+    public bool IsDeleted { get; set; }
+    public List<object> DomainEvents { get; } = new();
 
     public Task<IEnumerable<ValidationErrorDetail>> ValidateAsync()
     {
@@ -38,4 +40,7 @@ public class BaseEntity : IComparable<BaseEntity>
                 .ToArray())
             .ToUpper();
     }
+
+    public void AddDomainEvent(object domainEvent) => DomainEvents.Add(domainEvent);
+    public void ClearDomainEvents() => DomainEvents.Clear();
 }

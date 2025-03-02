@@ -1,8 +1,9 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Events;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities.Product
 {
-    public class Product : BaseEntity
+    public class Product : BaseEntity, IEntityWithEvents
     {
         public required string Name { get; set; }
         public decimal Price { get; set; }

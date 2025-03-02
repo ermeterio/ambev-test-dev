@@ -1,8 +1,13 @@
-﻿using Ambev.DeveloperEvaluation.Application.Base.Delete;
-using MediatR;
+﻿using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Companies.DeleteCompany
 {
-    public class DeleteCompanyCommand : BaseDeleteCommand, IRequest<DeleteCompanyResult>
-    { }
+    public class DeleteCompanyCommand : IRequest<DeleteCompanyResult>
+    {
+        public Guid Id { get; set; }
+        public DeleteCompanyCommand(Guid id)
+        {
+            Id = id;
+        }
+    }
 }

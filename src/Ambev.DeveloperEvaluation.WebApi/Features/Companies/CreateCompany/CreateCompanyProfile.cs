@@ -8,5 +8,6 @@ public class CreateCompanyProfile : Profile
     public CreateCompanyProfile()
     {
         CreateMap<CreateCompanyRequest, CreateCompanyCommand>();
+        CreateMap<CreateCompanyResult, CreateCompanyResponse>();
     }
 }

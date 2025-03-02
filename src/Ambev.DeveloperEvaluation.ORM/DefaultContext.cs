@@ -1,27 +1,50 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities.User;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities.Company;
+using Ambev.DeveloperEvaluation.Domain.Entities.Product;
+using Ambev.DeveloperEvaluation.Domain.Entities.Sale;
+using Ambev.DeveloperEvaluation.Domain.Entities.User;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using System.Reflection;
-using Ambev.DeveloperEvaluation.Domain.Entities.Company;
-using Ambev.DeveloperEvaluation.Domain.Entities.Product;
-using Ambev.DeveloperEvaluation.Domain.Entities.Sale;
 
 namespace Ambev.DeveloperEvaluation.ORM;
 
-public class DefaultContext(DbContextOptions<DefaultContext> options) : DbContext(options)
+public class DefaultContext(DbContextOptions<DefaultContext> options, IDomainEventDispatcher dispatcher) : DbContext(options)
 {
     public DbSet<User>? Users { get; set; }
     public DbSet<Sale>? Sales { get; set; }
     public DbSet<Product>? Products { get; set; }
     public DbSet<Company>? Companies { get; set; }
-    public DbSet<ProductHistory>? ProductHistories { get; set; }    
+    public DbSet<ProductHistory>? ProductHistories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var domainEntities = ChangeTracker.Entries<IEntityWithEvents>()
+            .Where(x => x.Entity.DomainEvents.Any())
+            .Select(x => x.Entity)
+            .ToList();
+
+        var domainEvents = domainEntities.SelectMany(x => x.DomainEvents).ToList();
+
+        domainEntities.ForEach(x => x.ClearDomainEvents());
+
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        foreach (var domainEvent in domainEvents)
+        {
+            dispatcher.AddEvent(domainEvent);
+        }
+
+        await dispatcher.DispatchEventsAsync();
+
+        return result;
     }
 }
 public class DefaultContextFactory : IDesignTimeDbContextFactory<DefaultContext>
@@ -48,6 +71,6 @@ public class DefaultContextFactory : IDesignTimeDbContextFactory<DefaultContext>
                }
         );
 
-        return new DefaultContext(builder.Options);
+        return new DefaultContext(builder.Options, new DomainEventDispatcher());
     }
 }

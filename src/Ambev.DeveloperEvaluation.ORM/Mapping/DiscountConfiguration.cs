@@ -12,6 +12,8 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
             builder.HasKey(d => d.Id);
             builder.Property(d => d.Id).HasColumnType("uuid").HasDefaultValueSql("gen_random_uuid()");
 
+            builder.Property(c => c.IsDeleted).HasDefaultValue(false);
+
             builder.Property(d => d.ProductId).IsRequired().HasMaxLength(36);
             builder.HasOne(p => p.Product).WithOne()
                 .HasForeignKey<Discount>(p => p.ProductId).IsRequired();
