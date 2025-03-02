@@ -1,9 +1,10 @@
 using Ambev.DeveloperEvaluation.Application;
+using Ambev.DeveloperEvaluation.Application.Events.Product;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
-using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Interface;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.MongoDB;
 using Ambev.DeveloperEvaluation.ORM;
@@ -50,7 +51,9 @@ public class Program
             builder.Services.AddRebus(config => config
                 .Transport(t => t.UseRabbitMq("amqp://guest:guest@localhost", "fila-eventos"))
                 .Logging(l => l.Console()));
-            
+
+            builder.Services.AutoRegisterHandlersFromAssemblyOf<CreateProductEventHandler>();
+
             builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
             builder.Services.AddJwtAuthentication(builder.Configuration);

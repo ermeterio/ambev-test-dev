@@ -7,7 +7,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
     public class BaseRepository<T> : IRepository<T> where T : BaseEntity
     {
         private readonly DefaultContext _context;
-        private DbSet<T> DbSet => _context.Set<T>();
+        protected DbSet<T> DbSet => _context.Set<T>();
 
         public BaseRepository(DefaultContext context)
         {
@@ -20,23 +20,25 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         public Task<T?> GetByIdAsync(Guid id)
             => DbSet.FirstOrDefaultAsync(s => s.Id == id);
 
-        public async Task AddAsync(T entity)
+        public async Task<T?> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
-            await DbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await DbSet.AddAsync(entity, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            return entity;
         }
 
-        public async Task UpdateAsync(Guid id, T entity)
+        public async Task<T?> UpdateAsync(T entity, CancellationToken cancellationToken = default)
         {
             DbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
+            return entity;
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
         {
             entity.IsDeleted = true;
             DbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

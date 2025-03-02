@@ -1,4 +1,4 @@
-﻿namespace Ambev.DeveloperEvaluation.Domain.Events
+﻿namespace Ambev.DeveloperEvaluation.Domain.Events.Interface
 {
     public interface IDomainEventDispatcher
     {

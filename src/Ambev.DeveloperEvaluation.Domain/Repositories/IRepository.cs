@@ -6,8 +6,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
     {
         Task<IEnumerable<T>> GetAllAsync();
         Task<T?> GetByIdAsync(Guid id);
-        Task AddAsync(T entity);
-        Task UpdateAsync(Guid id, T entity);
-        Task DeleteAsync(T entity);
+        Task<T?> AddAsync(T entity, CancellationToken cancellationToken);
+        Task<T?> UpdateAsync(T entity, CancellationToken cancellationToken);
+        Task DeleteAsync(T entity, CancellationToken cancellationToken);
     }
 }

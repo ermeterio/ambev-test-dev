@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Events;
+﻿using Ambev.DeveloperEvaluation.Domain.Events.Interface;
 using Rebus.Bus;
 
 public class DomainEventDispatcher : IDomainEventDispatcher

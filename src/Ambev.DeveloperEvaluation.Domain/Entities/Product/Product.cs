@@ -1,5 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Interface;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities.Product
 {
