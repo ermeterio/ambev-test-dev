@@ -8,7 +8,7 @@ using Xunit;
 namespace Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture
 {
     [CollectionDefinition(nameof(SaleTestsFixtureCollection))]
-    public class SaleTestsFixtureCollection : ICollectionFixture<SaleTestsFixture>;
+    public class SaleTestsFixtureCollection : IClassFixture<SaleTestsFixture>;
     public class SaleTestsFixture
     {
         public CreateSaleCommand ValidCreateSaleCommandMock()
@@ -23,12 +23,9 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture
 
         public IEnumerable<SaleItem> GetSaleItemsMock()
             => [new SaleItem { ProductId = Guid.NewGuid(), Quantity = 1 }];
-        
+
         public DeleteSaleCommand ValidDeleteSaleCommandMock()
-            => new ()
-                {
-                    Id = Guid.NewGuid()
-                };
+            => new(Guid.NewGuid());
 
         public UpdateSaleCommand ValidUpdateSaleCommandMock()
             => new ()
@@ -36,6 +33,24 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture
                 Id = Guid.NewGuid(),
                 CompanyId = Guid.NewGuid(),
                 Items = GetSaleItemsMock(),
+                Discounts = Enumerable.Empty<SaleDiscount>(),
+                Status = SaleStatus.Started,
+                UserId = Guid.NewGuid()
+            };
+
+        public DeveloperEvaluation.Domain.Entities.Sale.Sale GetValidSale()
+            => new ()
+            {
+                CompanyId = Guid.NewGuid(),
+                Items = GetSaleItemsMock(),
+                Discounts = Enumerable.Empty<SaleDiscount>(),
+                Status = SaleStatus.Started,
+                UserId = Guid.NewGuid()
+            };
+
+        public DeveloperEvaluation.Domain.Entities.Sale.Sale GetInvalidSale()
+            => new ()
+            {
                 Discounts = Enumerable.Empty<SaleDiscount>(),
                 Status = SaleStatus.Started,
                 UserId = Guid.NewGuid()

@@ -12,6 +12,12 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         public Task<Product?> GetByNameAndCategoryAsync(string name, Guid categoryId, CancellationToken cancellationToken)
             => DbSet.FirstOrDefaultAsync(p => p.Name == name && p.CategoryId == categoryId,
                     cancellationToken);
-        
+
+        public Task<Discount?> GetDiscountForProductAsync(Guid productId, int quantity,
+            CancellationToken cancellationToken)
+            => Context.ProductDiscounts!.FirstOrDefaultAsync(d =>
+                d.ProductId == productId && d.Quantity >= quantity && d.StartDate >= DateTime.Today &&
+                d.EndDate <= DateTime.Today, cancellationToken);
+
     }
 }

@@ -1,7 +1,8 @@
-﻿using FluentValidation;
-
-namespace Ambev.DeveloperEvaluation.Application.Companies.CreateCompany
+﻿namespace Ambev.DeveloperEvaluation.Application.Companies.CreateCompany
 {
-    public class CreateCompanyValidator : AbstractValidator<CreateCompanyCommand>
-    { }
+    public class CreateCompanyValidator : BaseCompanyValidator<CreateCompanyCommand>
+    {
+        public CreateCompanyValidator()
+        { }
+    }
 }

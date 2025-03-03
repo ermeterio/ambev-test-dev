@@ -20,13 +20,25 @@ namespace Ambev.DeveloperEvaluation.MongoDB.Repository
         public async Task<T?> GetByIdAsync(Guid id) =>
             await Collection.Find(e => e.Id == id).FirstOrDefaultAsync();
 
-        public async Task AddAsync(T entity) =>
-            await Collection.InsertOneAsync(entity);
+        public async Task<T?> AddAsync(T entity, CancellationToken cancellationToken)
+        {
+            await Collection.InsertOneAsync(entity, cancellationToken: cancellationToken);
+            return entity;
+        }
 
-        public async Task UpdateAsync(Guid id, T entity) =>
-            await Collection.ReplaceOneAsync(e => e.Id == id, entity);
+        public async Task<T?> UpdateAsync(T entity, CancellationToken cancellationToken)
+        {
+            await Collection.ReplaceOneAsync(e => e.Id == entity.Id, entity, cancellationToken: cancellationToken);
+            return entity;
+        }
 
-        public async Task DeleteAsync(T entity) =>
-            await Collection.DeleteOneAsync(e => e.Id == entity.Id);
+        public async Task<bool> DeleteAsync(T entity, CancellationToken cancellationToken)
+        {
+            await Collection.DeleteOneAsync(e => e.Id == entity.Id, cancellationToken: cancellationToken);
+            return true;
+        }
+
+        public Task AddRange(IList<T> entities, CancellationToken cancellationToken = default)
+            => Collection.InsertManyAsync(entities, null, cancellationToken);
     }
 }

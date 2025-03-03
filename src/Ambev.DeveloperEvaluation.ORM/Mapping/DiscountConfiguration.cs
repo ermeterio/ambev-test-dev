@@ -20,6 +20,10 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
 
             builder.Property(d => d.Value).IsRequired();
             builder.Property(d => d.Quantity).IsRequired();
+
+            builder.HasOne(d => d.Product).WithMany(p => p.Discounts)
+                .HasForeignKey(d => d.ProductId).IsRequired();
+
             builder.HasIndex(d => new { d.ProductId, d.Quantity }).IsUnique();
         }
     }

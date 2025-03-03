@@ -10,5 +10,6 @@ namespace Ambev.DeveloperEvaluation.Application.Sales
         public IEnumerable<SaleDiscount>? Discounts { get; set; }
         public IEnumerable<SaleItem>? Items { get; set; }
         public SaleStatus Status { get; set; }
+        public bool Success { get; set; }
     }
 }

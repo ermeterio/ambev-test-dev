@@ -15,6 +15,8 @@ public class DefaultContext(DbContextOptions<DefaultContext> options, IDomainEve
     public DbSet<User>? Users { get; set; }
     public DbSet<Sale>? Sales { get; set; }
     public DbSet<Product>? Products { get; set; }
+    public DbSet<Discount>? ProductDiscounts { get; set; }
+    public DbSet<SaleDiscount>? SaleDiscounts { get; set; }
     public DbSet<Company>? Companies { get; set; }
     public DbSet<ProductHistory>? ProductHistories { get; set; }
 

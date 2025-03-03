@@ -6,14 +6,14 @@ using Xunit;
 namespace Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture
 {
     [CollectionDefinition(nameof(CompanyTestsFixtureCollection))]
-    public class CompanyTestsFixtureCollection : ICollectionFixture<CompanyTestsFixture>;
+    public class CompanyTestsFixtureCollection : IClassFixture<CompanyTestsFixture>;
 
     public class CompanyTestsFixture
     {
         private readonly Faker _faker;
         public CompanyTestsFixture()
         {
-            _faker = new Faker("pt-BR");
+            _faker = new Faker();
         }
 
         public CreateCompanyCommand ValidCreateCompanyCommand()
@@ -29,13 +29,19 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture
         {
             return new UpdateCompanyCommand
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 Name = _faker.Name.FullName(),
                 Cnpj = GenerateValidCnpj()
             };
         }
 
-        static string GenerateValidCnpj()
+        public DeveloperEvaluation.Domain.Entities.Company.Company GetValidCompany()
+            => new (_faker.Name.FullName(), null, GenerateValidCnpj());
+
+        public DeveloperEvaluation.Domain.Entities.Company.Company GetInvalidCompany()
+            => new (_faker.Name.FullName(), null, "123456");
+
+        private static string GenerateValidCnpj()
         {
             var rnd = new Random();
             var cnpjBase = new int[12];
@@ -52,7 +58,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture
             return string.Join("", completeCnpj);
         }
 
-        static int DigitCalculator(IReadOnlyCollection<int> cnpj)
+        private static int DigitCalculator(IReadOnlyCollection<int> cnpj)
         {
             int[] multiplier = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2, 6, 5];
             var soma = cnpj.Select((t, i) => t * multiplier[multiplier.Length - cnpj.Count + i]).Sum();

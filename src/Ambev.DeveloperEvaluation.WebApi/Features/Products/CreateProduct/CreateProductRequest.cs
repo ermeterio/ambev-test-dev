@@ -1,14 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities.Product;
+﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateUpdateProduct;
-
-public class CreateProductRequest
-{
-    public required string Name { get; set; }
-    public decimal Price { get; set; }
-    public Guid CategoryId { get; set; }
-    public ProductImage? Image { get; set; }
-    public string Description { get; set; } = string.Empty;
-    public int ActualStock { get; set; }
-    public Guid CompanyId { get; set; }
-}
+public class CreateProductRequest : BaseProduct
+{ }

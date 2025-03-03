@@ -2,8 +2,9 @@
 {
     public class BaseCompany
     {
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public Guid? ParentCompanyId { get; set; }
-        public required string Cnpj { get; set; }
+        public string Cnpj { get; set; } = string.Empty;
+        public bool Success { get; set; }
     }
 }

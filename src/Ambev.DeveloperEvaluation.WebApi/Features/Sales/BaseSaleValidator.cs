@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
-public class CreateSaleRequestValidator : BaseSaleValidator<CreateSaleRequest>
+public class BaseSaleValidator<T> : AbstractValidator<T> where T : BaseSale
 {
-    public CreateSaleRequestValidator()
+    public BaseSaleValidator()
     {
         RuleFor(sale => sale.UserId).NotNull().NotEmpty();
         RuleFor(sale => sale.CompanyId).NotNull().NotEmpty();

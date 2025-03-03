@@ -6,12 +6,12 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
 {
     public class BaseRepository<T> : IRepository<T> where T : BaseEntity
     {
-        private readonly DefaultContext _context;
-        protected DbSet<T> DbSet => _context.Set<T>();
+        protected readonly DefaultContext Context;
+        protected DbSet<T> DbSet => Context.Set<T>();
 
         public BaseRepository(DefaultContext context)
         {
-            _context = context;
+            Context = context;
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -23,22 +23,29 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         public async Task<T?> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await DbSet.AddAsync(entity, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken);
             return entity;
         }
 
         public async Task<T?> UpdateAsync(T entity, CancellationToken cancellationToken = default)
         {
             DbSet.Update(entity);
-            await _context.SaveChangesAsync(cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken);
             return entity;
         }
 
-        public async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteAsync(T entity, CancellationToken cancellationToken = default)
         {
             entity.IsDeleted = true;
             DbSet.Update(entity);
-            await _context.SaveChangesAsync(cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+
+        public Task AddRange(IList<T> entities, CancellationToken cancellationToken = default)
+        {
+            DbSet.AddRangeAsync(entities, cancellationToken);
+            return Context.SaveChangesAsync(cancellationToken);
         }
     }
 }
