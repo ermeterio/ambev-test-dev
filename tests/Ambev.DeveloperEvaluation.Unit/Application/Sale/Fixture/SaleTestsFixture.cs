@@ -68,5 +68,15 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture
                 Status = SaleStatus.Started,
                 UserId = Guid.NewGuid()
             };
+
+        public DeveloperEvaluation.Domain.Entities.Sale.Sale GetInvalidSaleWithoutItems()
+            => new ()
+            {
+                CompanyId = Guid.NewGuid(),
+                Items = Enumerable.Empty<SaleItem>(),
+                Discounts = Enumerable.Empty<SaleDiscount>(),
+                Status = SaleStatus.Started,
+                UserId = Guid.NewGuid()
+            };
     }
 }

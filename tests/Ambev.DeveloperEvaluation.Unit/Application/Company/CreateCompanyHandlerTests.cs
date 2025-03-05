@@ -2,6 +2,7 @@
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture;
 using AutoMapper;
+using Bogus;
 using NSubstitute;
 using Xunit;
 
@@ -51,18 +52,35 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             Assert.NotNull(exceptions);
         }
 
-        [Fact(DisplayName = nameof(Should_Be_Update_Invalid_Company))]
+        [Fact(DisplayName = nameof(Should_Be_Create_Invalid_Company_With_No_Name))]
         [Trait("Company", nameof(CreateCompanyHandlerTests))]
-        public async Task Should_Be_Update_Invalid_Company()
+        public async Task Should_Be_Create_Invalid_Company_With_No_Name()
         {
             //arrange
-            var company = _fixture.GetInvalidCompany();
+            var company = _fixture.GetInvalidCompanyWithNotName();
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
             var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCompanyCommand(), CancellationToken.None));
+
+            //assert
+            Assert.NotNull(exceptions);
+        }
+
+        [Fact(DisplayName = nameof(Should_Be_Create_Invalid_Company_With_Invalid_Cnpj))]
+        [Trait("Company", nameof(CreateCompanyHandlerTests))]
+        public async Task Should_Be_Create_Invalid_Company_With_Invalid_Cnpj()
+        {
+            //arrange
+            var company = _fixture.GetInvalidCompanyWithInvalidCnpj();
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
+            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+
+            //act
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.InvalidCreateCompanyCommandWithNoName(), CancellationToken.None));
 
             //assert
             Assert.NotNull(exceptions);

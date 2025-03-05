@@ -49,11 +49,30 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product.Fixture
                 MaxItemsForSale = 100
             };
 
-        public DeveloperEvaluation.Domain.Entities.Product.Product GetInvalidProduct()
+        public DeveloperEvaluation.Domain.Entities.Product.Product GetInvalidProductWithNoName()
             => new()
             {
                 Description = _faker.Vehicle.Manufacturer(),
                 CompanyId = Guid.NewGuid(),
+                Price = _faker.Random.Decimal(),
+                ActualStock = _faker.Random.Int()
+            };
+
+        public DeveloperEvaluation.Domain.Entities.Product.Product GetInvalidProductWithNoDescription()
+            => new()
+            {
+                Name = _faker.Name.FullName(),
+                Description = string.Empty,
+                CompanyId = Guid.NewGuid(),
+                Price = _faker.Random.Decimal(),
+                ActualStock = _faker.Random.Int()
+            };
+
+        public DeveloperEvaluation.Domain.Entities.Product.Product GetInvalidProductWithNoCompanyId()
+            => new()
+            {
+                Name = _faker.Name.FullName(),
+                Description = _faker.Vehicle.Manufacturer(),
                 Price = _faker.Random.Decimal(),
                 ActualStock = _faker.Random.Int()
             };
