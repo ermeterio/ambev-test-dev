@@ -1,1 +1,1 @@
-# backend
+To run this project, it is necessary to run it from docker-compose. It will also be necessary to register the user and company before registering the category, product and sale. The sale updates the discounted items with each change, so the discounts will be updated automatically. The test project is incomplete, as this test is very long and due to the architecture of ports and adapters, it becomes verbose.
