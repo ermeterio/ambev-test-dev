@@ -11,6 +11,7 @@ namespace Ambev.DeveloperEvaluation.Application.Products
             RuleFor(p => p.Price).NotNull().NotEmpty().WithMessage("Price is mandatory");
             RuleFor(p => p.CategoryId).NotNull().NotEmpty().WithMessage("CategoryId is mandatory");
             RuleFor(p => p.ActualStock).NotNull().NotEmpty().WithMessage("ActualStock is mandatory");
+            RuleFor(p => p.MaxItemsForSale).GreaterThan(0).WithMessage("MaxItemsForSale is mandatory");
         }
     }
 }

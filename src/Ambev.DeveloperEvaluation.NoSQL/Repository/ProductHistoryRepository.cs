@@ -8,6 +8,6 @@ namespace Ambev.DeveloperEvaluation.MongoDB.Repository
         : MongoRepository<ProductHistory>(mongoClient, settings), IProductHistoryRepository
     {
         public async Task<IEnumerable<ProductHistory>> GetByProductIdAsync(Guid productId) =>
-            await Collection.Find(e => e.ProductId == productId).ToListAsync();
+            await Collection.Find(e => e.ProductId == productId.ToString()).ToListAsync();
     }
 }

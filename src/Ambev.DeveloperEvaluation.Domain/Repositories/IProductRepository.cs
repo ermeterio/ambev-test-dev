@@ -7,5 +7,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         Task<Product?> GetByNameAndCategoryAsync(string name, Guid categoryId, CancellationToken cancellationToken);
         Task<Discount?> GetDiscountForProductAsync(Guid productId, int quantity,
             CancellationToken cancellationToken);
+        Task<bool> ExistsProductCategoryAsync(Guid categoryId, CancellationToken cancellationToken);
     }
 }

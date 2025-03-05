@@ -3,6 +3,5 @@
     public class UpdateSaleResult : BaseSale
     {
         public Guid Id { get; set; }
-        public bool Success { get; set; }
     }
 }

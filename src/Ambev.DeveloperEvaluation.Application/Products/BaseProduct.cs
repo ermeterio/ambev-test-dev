@@ -12,5 +12,6 @@ namespace Ambev.DeveloperEvaluation.Application.Products
         public int ActualStock { get; set; }
         public Guid CompanyId { get; set; }
         public bool Success { get; set; }
+        public int MaxItemsForSale { get; set; }
     }
 }

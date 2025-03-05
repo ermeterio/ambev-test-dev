@@ -8,5 +8,6 @@ public class UpdateProductProfile : Profile
     public UpdateProductProfile()
     {
         CreateMap<UpdateProductRequest, UpdateProductCommand>();
+        CreateMap<UpdateProductResult, UpdateProductResponse>();
     }
 }

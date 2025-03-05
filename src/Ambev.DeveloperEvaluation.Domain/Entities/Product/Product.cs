@@ -12,9 +12,9 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Product
         public ProductImage? Image { get; set; } 
         public string Description { get; set; } = string.Empty;
         public int ActualStock { get; set; }
-        public Guid CompanyId { get; set; }
         public Company.Company? Company { get; set; }
         public IEnumerable<Discount>? Discounts { get; set; }
+        public int MaxItemsForSale { get; set; }
 
         public void Update(Product product)
         {

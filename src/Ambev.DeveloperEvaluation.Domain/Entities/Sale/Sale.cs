@@ -5,11 +5,10 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Sale
 {
     public class Sale : BaseEntity
     {
-        public Guid CompanyId { get; set; }
         public Company.Company? Company { get; set; }
         public Guid UserId { get; set; }
         public User.User? User { get; set; }
-        public string Code => GenerateShortGuid();
+        public string Code => Id.ToString()[..6].ToUpper();
         public IEnumerable<SaleDiscount>? Discounts { get; set; }
         public IEnumerable<SaleItem>? Items { get; set; }
         public SaleStatus Status { get; set; }

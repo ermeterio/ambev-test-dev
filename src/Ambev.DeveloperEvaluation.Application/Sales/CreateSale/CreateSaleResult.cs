@@ -5,6 +5,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
 {
     public class CreateSaleResult
     {
+        public Guid Id { get; set; }
         public Guid CompanyId { get; set; }
         public Guid UserId { get; set; }
         public IReadOnlyCollection<SaleDiscount>? Discounts { get; set; }

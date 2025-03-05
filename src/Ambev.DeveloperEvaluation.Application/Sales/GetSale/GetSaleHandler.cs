@@ -24,7 +24,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.GetSale
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
-            var sale = await _saleRepository.GetByIdAsync(request.Id);
+            var sale = await _saleRepository.GetCompleteSale(request.Id, cancellationToken);
             return sale != null ? _mapper.Map<GetSaleResult>(sale) : new();
         }
     }

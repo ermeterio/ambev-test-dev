@@ -18,6 +18,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
             builder.Property(p => p.Description).HasMaxLength(500);
             builder.Property(p => p.Price).IsRequired();
             builder.Property(p => p.ActualStock);
+            builder.Property(p => p.MaxItemsForSale);
 
             builder.Property(p => p.CategoryId).IsRequired();
             builder.HasOne(p => p.Category)

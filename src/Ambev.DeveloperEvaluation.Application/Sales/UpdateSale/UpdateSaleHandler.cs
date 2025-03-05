@@ -3,22 +3,21 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
-using Rebus.Bus;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
 {
     public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleResult>
     {
         private readonly IProductRepository _productRepository;
+        private readonly ICompanyRepository _companyRepository;
         private readonly ISaleRepository _saleRepository;
         private readonly IMapper _mapper;
-        private readonly IBus _bus;
-        public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IProductRepository productRepository, IBus bus)
+        public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IProductRepository productRepository, ICompanyRepository companyRepository)
         {
+            _productRepository = productRepository;
+            _companyRepository = companyRepository;
             _saleRepository = saleRepository;
             _mapper = mapper;
-            _productRepository = productRepository;
-            _bus = bus;
         }
 
         public async Task<UpdateSaleResult> Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
@@ -33,8 +32,14 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
             if (sale is null)
                 throw new InvalidOperationException($"Sale with Id {request.Id} not found");
 
+            var existsCompany = await _companyRepository.GetByIdAsync(request.CompanyId);
+            if (existsCompany is null)
+                throw new InvalidOperationException($"Company with Id {request.CompanyId} does not exist");
+
             var saleMapper = _mapper.Map<Sale>(request);
             sale.Update(saleMapper);
+
+            await _saleRepository.RemoveAllItemsForSale(sale.Id, cancellationToken);
 
             var updatedSale = await _saleRepository.UpdateAsync(sale, cancellationToken);
             if(updatedSale is null)
@@ -43,6 +48,17 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
             var discounts = updatedSale?.Discounts?.ToList() ?? [];
             foreach (var item in sale.Items!)
             {
+                var product = await _productRepository.GetByIdAsync(item.ProductId);
+                if (product is null)
+                    throw new InvalidOperationException($"Product with Id {item.ProductId} not found");
+
+                item.Product = product;
+
+                if (product.MaxItemsForSale < item.Quantity)
+                {
+                    throw new InvalidOperationException($"Product with Id {item.ProductId} has a limit of {product.MaxItemsForSale} items per sale");
+                }
+
                 var discount = await _productRepository.GetDiscountForProductAsync(item.ProductId, item.Quantity, cancellationToken);
                 if (discount is not null)
                 {

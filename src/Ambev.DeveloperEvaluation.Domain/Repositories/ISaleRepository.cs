@@ -7,5 +7,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         Task AddDiscountsForSale(IEnumerable<SaleDiscount> discounts, CancellationToken cancellationToken);
         Task<Sale?> GetExistingSaleForUser(Guid requestUserId, CancellationToken cancellationToken);
         Task RemoveAllDiscountsForSale(Guid saleId, CancellationToken cancellationToken);
+        Task RemoveAllItemsForSale(Guid saleId, CancellationToken cancellationToken);
+        Task<Sale?> GetCompleteSale(Guid saleId, CancellationToken cancellationToken);
     }
 }

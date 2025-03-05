@@ -18,7 +18,8 @@ public class DefaultContext(DbContextOptions<DefaultContext> options, IDomainEve
     public DbSet<Discount>? ProductDiscounts { get; set; }
     public DbSet<SaleDiscount>? SaleDiscounts { get; set; }
     public DbSet<Company>? Companies { get; set; }
-    public DbSet<ProductHistory>? ProductHistories { get; set; }
+    public DbSet<Category>? Categories { get; set; }
+    public DbSet<SaleItem>? SaleItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

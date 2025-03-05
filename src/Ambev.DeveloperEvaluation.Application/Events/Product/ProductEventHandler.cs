@@ -5,11 +5,11 @@ using Rebus.Handlers;
 
 namespace Ambev.DeveloperEvaluation.Application.Events.Product
 {
-    public class CreateProductEventHandler : IHandleMessages<CreateProductEvent>
+    public class ProductEventHandler : IHandleMessages<CreateProductEvent>, IHandleMessages<UpdateProductEvent>
     {
         private readonly IProductHistoryRepository _productHistoryRepository;
 
-        public CreateProductEventHandler(IProductHistoryRepository productHistoryRepository)
+        public ProductEventHandler(IProductHistoryRepository productHistoryRepository)
         {
             _productHistoryRepository = productHistoryRepository;
         }
@@ -19,11 +19,24 @@ namespace Ambev.DeveloperEvaluation.Application.Events.Product
             return _productHistoryRepository.AddAsync(new ProductHistory
             {
                 Id = Guid.NewGuid(),
-                ProductId = message.Id,
+                ProductId = message.Id.ToString(),
                 Price = message.Price,
                 StockInitial = message.Stock,
                 StockFinal = message.Stock,
-                Date = message.CreatedAt
+                Date = message.CreatedAt,
+            });
+        }
+
+        public Task Handle(UpdateProductEvent message)
+        {
+            return _productHistoryRepository.AddAsync(new ProductHistory
+            {
+                Id = Guid.NewGuid(),
+                ProductId = message.Id.ToString(),
+                Price = message.Price,
+                StockInitial = message.ActualStock,
+                StockFinal = message.NewStock,
+                Date = message.UpdatedAt
             });
         }
     }

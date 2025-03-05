@@ -1,5 +1,8 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Domain.Entities.Product;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Product.Fixture;
 using AutoMapper;
 using NSubstitute;
@@ -25,7 +28,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             productRepository.AddAsync(Arg.Any<DeveloperEvaluation.Domain.Entities.Product.Product>(),
                     Arg.Any<CancellationToken>())
                 .Returns(_fixture.GetValidProduct());
-            var commandHandler = new CreateProductHandler(productRepository, Substitute.For<IMapper>());
+
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+
+            var categoryRepository = Substitute.For<ICategoryRepository>();
+            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
+
+            var commandHandler = new CreateProductHandler(productRepository, Substitute.For<IMapper>(), companyRepository, categoryRepository);
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateProductCommandMock(), CancellationToken.None));
@@ -41,11 +51,17 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
         public async Task Should_Be_Create_Duplicate_Product()
         {
             //arrange
-
             var repository = Substitute.For<IProductRepository>();
             var product = _fixture.GetValidProduct();
             repository.GetByNameAndCategoryAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(product);
-            var commandHandler = new CreateProductHandler(repository, Substitute.For<IMapper>());
+
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+
+            var categoryRepository = Substitute.For<ICategoryRepository>();
+            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new Category(){CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test"});
+
+            var commandHandler = new CreateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository);
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateProductCommandMock(), CancellationToken.None));
@@ -62,7 +78,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             var repository = Substitute.For<IProductRepository>();
             var product = _fixture.GetInvalidProduct();
             repository.GetByNameAndCategoryAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(product);
-            var commandHandler = new CreateProductHandler(repository, Substitute.For<IMapper>());
+
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+
+            var categoryRepository = Substitute.For<ICategoryRepository>();
+            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new Category(){CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test"});
+
+            var commandHandler = new CreateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository);
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateProductCommandMock(), CancellationToken.None));

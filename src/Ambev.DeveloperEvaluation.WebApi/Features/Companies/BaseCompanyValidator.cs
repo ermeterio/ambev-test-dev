@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Ambev.DeveloperEvaluation.WebApi.Features.Companies.UpdateCompany;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Companies;
 
@@ -8,26 +6,52 @@ public class BaseCompanyValidator<T> : AbstractValidator<T> where T : BaseCompan
 {
     public BaseCompanyValidator()
     {
-        RuleFor(company => IsValidCnpj(company.Cnpj)).NotEqual(false).WithMessage("Invalid Cnpj");
-        RuleFor(company => company.Name).NotEmpty().Length(100);
+        RuleFor(company => IsCnpj(company.Cnpj)).NotEqual(false).WithMessage("Invalid Cnpj");
+        RuleFor(company => company.Name).NotEmpty().MaximumLength(100);
     }
 
-    static bool IsValidCnpj(string cnpj)
+    public static bool IsCnpj(string cnpj)
     {
-        cnpj = Regex.Replace(cnpj, "[^0-9]", "");
-        if (cnpj.Length != 14 || new string(cnpj[0], 14) == cnpj) return false;
+        var multiplier1 = new int[12] { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+        var multiplier2 = new int[13] { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+        int sum;
+        int remainder;
+        string digit;
+        string tempCnpj;
 
-        var cnpjNumbers = cnpj.Select(c => c - '0').ToArray();
-        return cnpjNumbers[12] == DigitCalculate(cnpjNumbers.Take(12).ToArray()) &&
-               cnpjNumbers[13] == DigitCalculate(cnpjNumbers.Take(13).ToArray());
-    }
+        cnpj = cnpj.Trim();
+        cnpj = cnpj.Replace(".", "").Replace("-", "").Replace("/", "");
 
-    static int DigitCalculate(IReadOnlyCollection<int> cnpj)
-    {
-        int[] multiplicadores = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2, 6, 5];
-        var sum = cnpj.Select((t, i) => t * multiplicadores[multiplicadores.Length - cnpj.Count + i]).Sum();
+        if (cnpj.Length != 14)
+            return false;
 
-        var rest = sum % 11;
-        return (rest < 2) ? 0 : 11 - rest;
+        tempCnpj = cnpj[..12];
+
+        sum = 0;
+        for (var i = 0; i < 12; i++)
+            sum += int.Parse(tempCnpj[i].ToString()) * multiplier1[i];
+
+        remainder = (sum % 11);
+        if (remainder < 2)
+            remainder = 0;
+        else
+            remainder = 11 - remainder;
+
+        digit = remainder.ToString();
+
+        tempCnpj += digit;
+        sum = 0;
+        for (var i = 0; i < 13; i++)
+            sum += int.Parse(tempCnpj[i].ToString()) * multiplier2[i];
+
+        remainder = (sum % 11);
+        if (remainder < 2)
+            remainder = 0;
+        else
+            remainder = 11 - remainder;
+
+        digit += remainder.ToString();
+
+        return cnpj.EndsWith(digit, StringComparison.Ordinal);
     }
 }

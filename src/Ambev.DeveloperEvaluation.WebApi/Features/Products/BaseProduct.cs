@@ -11,4 +11,5 @@ public class BaseProduct
     public string Description { get; set; } = string.Empty;
     public int ActualStock { get; set; }
     public Guid CompanyId { get; set; }
+    public int MaxItemsForSale { get; set; }
 }

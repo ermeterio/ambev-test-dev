@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities.Product;
+using Ambev.DeveloperEvaluation.Domain.Events.Product;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
@@ -9,6 +10,7 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
         {
             CreateMap<CreateProductCommand, Product>();
             CreateMap<Product, CreateProductResult>();
+            CreateMap<Product, CreateProductEvent>();
         }
     }
 }

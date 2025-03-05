@@ -1,31 +1,64 @@
+using System.Text;
 using Ambev.DeveloperEvaluation.Application;
 using Ambev.DeveloperEvaluation.Application.Events.Product;
 using Ambev.DeveloperEvaluation.Common.HealthChecks;
 using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Entities.Product;
 using Ambev.DeveloperEvaluation.Domain.Events.Interface;
+using Ambev.DeveloperEvaluation.Domain.Events.Product;
 using Ambev.DeveloperEvaluation.IoC;
+using Ambev.DeveloperEvaluation.IoC.ModuleInitializers;
 using Ambev.DeveloperEvaluation.MongoDB;
 using Ambev.DeveloperEvaluation.ORM;
+using Ambev.DeveloperEvaluation.WebApi.Infrastructure;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using Rebus.Config;
+using Rebus.Routing.TypeBased;
+using Rebus.ServiceProvider;
 using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         try
         {
             Log.Information("Starting web application");
 
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+            var jwtSettings = builder.Configuration.GetSection("Jwt");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
+
+            builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            
+            builder.Services.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+
             builder.AddDefaultLogging();
 
             builder.Services.AddControllers();
@@ -45,19 +78,44 @@ public class Program
             if (mongoSettings is not null)
             {
                 builder.Services.AddSingleton(mongoSettings);
-                builder.Services.AddSingleton<IMongoClient, MongoClient>(sp => new MongoClient(mongoSettings.ConnectionString));
+                builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoSettings.ConnectionString));
+    
+                builder.Services.AddSingleton(sp =>
+                {
+                    var client = sp.GetRequiredService<IMongoClient>();
+                    return client.GetDatabase(mongoSettings.DatabaseName); 
+                });
+
+                builder.Services.AddScoped(sp =>
+                {
+                    var database = sp.GetRequiredService<IMongoDatabase>();
+                    return database.GetCollection<ProductHistory>("ProductHistory");
+                });
             }
 
-            builder.Services.AddRebus(config => config
-                .Transport(t => t.UseRabbitMq("amqp://guest:guest@localhost", "fila-eventos"))
-                .Logging(l => l.Console()));
 
-            builder.Services.AutoRegisterHandlersFromAssemblyOf<CreateProductEventHandler>();
+            var rabbitMqSettings = builder.Configuration.GetSection("RabbitMqSettings").Get<RabbitMqSettings>();
+            if (rabbitMqSettings is not null)
+            {
+                builder.Services.AutoRegisterHandlersFromAssemblyOf<ProductEventHandler>();
+
+                builder.Services.AddRebus(
+                    configure =>        
+                         configure.Routing(r => r.TypeBased().MapAssemblyOf<ApplicationLayer>(rabbitMqSettings.QueueName))
+                        .Transport(t => t.UseRabbitMq(rabbitMqSettings.Connection, inputQueueName: rabbitMqSettings.QueueName))
+                        .Sagas(s => s.StoreInPostgres(builder.Configuration.GetConnectionString("DefaultConnection"),
+                                                                                dataTableName: "Sagas",
+                                                                                indexTableName: "SagaIndexes"))
+                        .Timeouts(t =>
+                                    t.StoreInPostgres(builder.Configuration.GetConnectionString("DefaultConnection"),
+                                    tableName: "Timeouts")),
+                        onCreated: bus => Task.WhenAll(
+                            EventsModuleInitializer.Initialize(bus)
+                        ));
+            }
 
             builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-
-            builder.Services.AddJwtAuthentication(builder.Configuration);
-
+            
             builder.RegisterDependencies();
 
             builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ApplicationLayer).Assembly);
@@ -73,6 +131,7 @@ public class Program
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             var app = builder.Build();
+            
             app.UseMiddleware<ValidationExceptionMiddleware>();
 
             if (app.Environment.IsDevelopment())
@@ -81,6 +140,20 @@ public class Program
                 app.UseSwaggerUI();
             }
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<DefaultContext>();
+                    await context.Database.MigrateAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao aplicar migrations: {ex.Message}");
+                }
+            }
+                        
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
@@ -90,7 +163,7 @@ public class Program
 
             app.MapControllers();
 
-            app.Run();
+            await app.RunAsync();
         }
         catch (Exception ex)
         {
@@ -98,7 +171,7 @@ public class Program
         }
         finally
         {
-            Log.CloseAndFlush();
+            await Log.CloseAndFlushAsync();
         }
     }
 }

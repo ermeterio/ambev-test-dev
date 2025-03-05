@@ -1,10 +1,12 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture;
 using AutoMapper;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Rebus.Bus;
+using Rebus.Compression;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Sale
@@ -33,8 +35,11 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale
             mapper.Map<DeveloperEvaluation.Domain.Entities.Sale.Sale>(Arg.Any<UpdateSaleCommand>())
                 .Returns(sale);
 
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+
             var commandHandler = new UpdateSaleHandler(saleRepository, mapper, 
-                Substitute.For<IProductRepository>(), Substitute.For<IBus>());
+                Substitute.For<IProductRepository>(), companyRepository);
             
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateSaleCommandMock(), CancellationToken.None));
@@ -51,7 +56,10 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale
             //arrange
             var repository = Substitute.For<ISaleRepository>();
             repository.GetByIdAsync(Arg.Any<Guid>()).ReturnsNull();
-            var commandHandler = new UpdateSaleHandler(repository, Substitute.For<IMapper>(), Substitute.For<IProductRepository>(), Substitute.For<IBus>());
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+            var commandHandler = new UpdateSaleHandler(repository, Substitute.For<IMapper>(), 
+                Substitute.For<IProductRepository>(), companyRepository);
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateSaleCommandMock(), CancellationToken.None));
@@ -68,7 +76,11 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale
             var sale = _fixture.GetInvalidSale();
             var saleRepository = Substitute.For<ISaleRepository>();
             saleRepository.GetExistingSaleForUser(Arg.Any<Guid>(), CancellationToken.None).Returns(sale);
-            var commandHandler = new UpdateSaleHandler(saleRepository, Substitute.For<IMapper>(), Substitute.For<IProductRepository>(), Substitute.For<IBus>());
+            
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+            var commandHandler = new UpdateSaleHandler(saleRepository, Substitute.For<IMapper>(), 
+                Substitute.For<IProductRepository>(), companyRepository);
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateSaleCommandMock(), CancellationToken.None));

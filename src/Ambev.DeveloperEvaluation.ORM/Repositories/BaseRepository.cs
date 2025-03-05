@@ -29,7 +29,6 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
 
         public async Task<T?> UpdateAsync(T entity, CancellationToken cancellationToken = default)
         {
-            DbSet.Update(entity);
             await Context.SaveChangesAsync(cancellationToken);
             return entity;
         }
