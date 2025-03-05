@@ -25,6 +25,15 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture
             };
         }
 
+        public CreateCompanyCommand InvalidCreateCompanyCommandWithNoName()
+        {
+            return new CreateCompanyCommand
+            {
+                Name = string.Empty,
+                Cnpj = "84329228000110"
+            };
+        }
+
         public UpdateCompanyCommand ValidUpdateCompanyCommand()
         {
             return new UpdateCompanyCommand
@@ -40,6 +49,12 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture
 
         public DeveloperEvaluation.Domain.Entities.Company.Company GetInvalidCompany()
             => new (_faker.Name.FullName(), null, "123456");
+
+        public DeveloperEvaluation.Domain.Entities.Company.Company GetInvalidCompanyWithNotName()
+            => new(string.Empty, null, "84329228000110");
+
+        public DeveloperEvaluation.Domain.Entities.Company.Company GetInvalidCompanyWithInvalidCnpj()
+            => new(string.Empty, null, "123456");
 
     }
 }

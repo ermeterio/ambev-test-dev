@@ -11,6 +11,13 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category.Fixture
     {
         private readonly Faker _faker = new();
 
+        public CreateCategoryCommand InvalidCreateCategoryCommandMock()
+            => new()
+            {
+                Name = _faker.Vehicle.Model(),
+                CompanyId = Guid.NewGuid()
+            };
+
         public CreateCategoryCommand ValidCreateCategoryCommandMock()
             => new()
             {
@@ -24,5 +31,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category.Fixture
                 Name = _faker.Vehicle.Model(),
                 CompanyId = Guid.NewGuid()
             };
+
+        public DeveloperEvaluation.Domain.Entities.Company.Company GetValidCompany()
+            => new (_faker.Name.FullName(), null, "84329228000110");
     }
 }

@@ -1,8 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
-using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
-using Ambev.DeveloperEvaluation.Domain.Entities.Product;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
-using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Product.Fixture;
 using AutoMapper;
 using NSubstitute;
@@ -60,7 +57,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
 
             var categoryRepository = Substitute.For<ICategoryRepository>();
-            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category(){CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test"});
+            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
 
             var commandHandler = new CreateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository, Substitute.For<IBus>());
 
@@ -71,20 +68,68 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             Assert.NotNull(exceptions);
         }
 
-        [Fact(DisplayName = nameof(Should_Be_Create_Invalid_Product))]
+        [Fact(DisplayName = nameof(Should_Be_Create_Invalid_Product_With_No_Name))]
         [Trait("Product", nameof(CreateProductHandlerTests))]
-        public async Task Should_Be_Create_Invalid_Product()
+        public async Task Should_Be_Create_Invalid_Product_With_No_Name()
         {
             //arrange
             var repository = Substitute.For<IProductRepository>();
-            var product = _fixture.GetInvalidProduct();
+            var product = _fixture.GetInvalidProductWithNoName();
             repository.GetByNameAndCategoryAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(product);
 
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
 
             var categoryRepository = Substitute.For<ICategoryRepository>();
-            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category(){CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test"});
+            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
+
+            var commandHandler = new CreateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository, Substitute.For<IBus>());
+
+            //act
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateProductCommandMock(), CancellationToken.None));
+
+            //assert
+            Assert.NotNull(exceptions);
+        }
+
+        [Fact(DisplayName = nameof(Should_Be_Create_Invalid_Product_With_No_Description))]
+        [Trait("Product", nameof(CreateProductHandlerTests))]
+        public async Task Should_Be_Create_Invalid_Product_With_No_Description()
+        {
+            //arrange
+            var repository = Substitute.For<IProductRepository>();
+            var product = _fixture.GetInvalidProductWithNoDescription();
+            repository.GetByNameAndCategoryAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(product);
+
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+
+            var categoryRepository = Substitute.For<ICategoryRepository>();
+            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
+
+            var commandHandler = new CreateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository, Substitute.For<IBus>());
+
+            //act
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateProductCommandMock(), CancellationToken.None));
+
+            //assert
+            Assert.NotNull(exceptions);
+        }
+
+        [Fact(DisplayName = nameof(Should_Be_Create_Invalid_Product_With_No_CompanyId))]
+        [Trait("Product", nameof(CreateProductHandlerTests))]
+        public async Task Should_Be_Create_Invalid_Product_With_No_CompanyId()
+        {
+            //arrange
+            var repository = Substitute.For<IProductRepository>();
+            var product = _fixture.GetInvalidProductWithNoDescription();
+            repository.GetByNameAndCategoryAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(product);
+
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+
+            var categoryRepository = Substitute.For<ICategoryRepository>();
+            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
 
             var commandHandler = new CreateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository, Substitute.For<IBus>());
 

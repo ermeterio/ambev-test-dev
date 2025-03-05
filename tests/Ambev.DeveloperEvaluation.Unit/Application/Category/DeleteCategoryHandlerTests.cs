@@ -2,6 +2,7 @@
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Category.Fixture;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Category
@@ -41,8 +42,29 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category
         {
             //arrange
             var categoryRepository = Substitute.For<ICategoryRepository>();
-            categoryRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidCategory());
+            categoryRepository.GetByIdAsync(Arg.Any<Guid>()).ReturnsNull();
+
             var commandHandler = new DeleteCategoryHandler(categoryRepository, Substitute.For<IProductRepository>());
+
+            //act
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(new DeleteCategoryCommand(new Guid()), CancellationToken.None));
+
+            //assert
+            Assert.NotNull(exceptions);
+        }
+
+        [Fact(DisplayName = nameof(Should_Be_Delete_Has_Products))]
+        [Trait("Category", nameof(DeleteCategoryHandlerTests))]
+        public async Task Should_Be_Delete_Has_Products()
+        {
+            //arrange
+            var categoryRepository = Substitute.For<ICategoryRepository>();
+            categoryRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidCategory());
+
+            var productRepository = Substitute.For<IProductRepository>();
+            productRepository.ExistsProductCategoryAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
+
+            var commandHandler = new DeleteCategoryHandler(categoryRepository, productRepository);
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(new DeleteCategoryCommand(new Guid()), CancellationToken.None));
