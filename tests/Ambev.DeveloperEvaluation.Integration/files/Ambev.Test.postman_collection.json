@@ -1,0 +1,640 @@
+{
+	"info": {
+		"_postman_id": "5ded3bcf-4aac-4392-aba6-4624f78b07da",
+		"name": "Ambev.Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3219467"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "GetUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/c8cd7ebe-5a7d-4910-a092-482efb9b6722",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"c8cd7ebe-5a7d-4910-a092-482efb9b6722"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateUser",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"dermeterio\",\r\n  \"password\": \"D@n160889\",\r\n  \"phone\": \"16992074751\",\r\n  \"email\": \"ermeterio@gmail.com\",\r\n  \"status\": 1,\r\n  \"role\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/c8cd7ebe-5a7d-4910-a092-482efb9b6722",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"c8cd7ebe-5a7d-4910-a092-482efb9b6722"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "GetCategory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/category/c8cd7ebe-5a7d-4910-a092-482efb9b6722",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"category",
+								"c8cd7ebe-5a7d-4910-a092-482efb9b6722"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateCategory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\" : \"Category test\",\r\n    \"CompanyId\" : \"0b751aa8-81aa-4f0a-9fa9-f6697e2d8c00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/category",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCategory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/category/0b751aa8-81aa-4f0a-9fa9-f6697e2d8c00",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"category",
+								"0b751aa8-81aa-4f0a-9fa9-f6697e2d8c00"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Company",
+			"item": [
+				{
+					"name": "GetCompany",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/company/0b751aa8-81aa-4f0a-9fa9-f6697e2d8c00",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"company",
+								"0b751aa8-81aa-4f0a-9fa9-f6697e2d8c00"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateCompany",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"TESTE S/A\",\r\n  \"cnpj\": \"50664631000183\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/company",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"company"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCompany",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/company",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"company"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "GetProduct",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/product/473a62e5-6b09-40c9-8c6c-477c95cb2e96",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product",
+								"473a62e5-6b09-40c9-8c6c-477c95cb2e96"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateProduct",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Teste\",\r\n  \"price\": 100.50,\r\n  \"categoryId\": \"42fcb6ec-81ab-4f93-b800-44d8fc0af54a\",\r\n  \"description\": \"Produto Teste\",\r\n  \"actualStock\": 100,\r\n  \"companyId\": \"0b751aa8-81aa-4f0a-9fa9-f6697e2d8c00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/product",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteProduct",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/product/473a62e5-6b09-40c9-8c6c-477c95cb2e96",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product",
+								"473a62e5-6b09-40c9-8c6c-477c95cb2e96"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateProduct",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"473a62e5-6b09-40c9-8c6c-477c95cb2e96\",\r\n    \"name\": \"Teste\",\r\n    \"price\": 100.50,\r\n    \"categoryId\": \"42fcb6ec-81ab-4f93-b800-44d8fc0af54a\",\r\n    \"description\": \"Produto Teste\",\r\n    \"actualStock\": 100,\r\n    \"companyId\": \"0b751aa8-81aa-4f0a-9fa9-f6697e2d8c00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/product",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddDiscount",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": \"473a62e5-6b09-40c9-8c6c-477c95cb2e96\",\r\n  \"value\": 10,\r\n  \"quantity\": 1,\r\n  \"startDate\": \"2025-01-01T01:22:05.277Z\",\r\n  \"endDate\": \"2027-03-05T01:22:05.277Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/product/discount",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product",
+								"discount"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sale",
+			"item": [
+				{
+					"name": "GetSale",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sale/8e587734-f162-4e5e-8fc9-239256b2466a",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sale",
+								"8e587734-f162-4e5e-8fc9-239256b2466a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateSale",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"companyId\": \"0b751aa8-81aa-4f0a-9fa9-f6697e2d8c00\",\r\n  \"userId\": \"c8cd7ebe-5a7d-4910-a092-482efb9b6722\",\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"473a62e5-6b09-40c9-8c6c-477c95cb2e96\",      \r\n      \"quantity\": 1\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/sale",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sale"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteSale",
+					"request": {
+						"method": "DELETE",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "PutSale",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"8e587734-f162-4e5e-8fc9-239256b2466a\",\r\n    \"companyId\": \"0b751aa8-81aa-4f0a-9fa9-f6697e2d8c00\",\r\n    \"userId\": \"c8cd7ebe-5a7d-4910-a092-482efb9b6722\",\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"473a62e5-6b09-40c9-8c6c-477c95cb2e96\",\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/sale",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sale"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.globals.set(\"base_url\", \"https://localhost:8081\");\r",
+					"pm.globals.set(\"endpoint\", \"/api/Auth\");\r",
+					"pm.globals.set(\"email\", \"ermeterio@gmail.com\");\r",
+					"pm.globals.set(\"password\", \"D@n160889\");\r",
+					"\r",
+					"let requestBody = {\r",
+					"    email: pm.globals.get(\"email\"),\r",
+					"    password: pm.globals.get(\"password\")\r",
+					"};\r",
+					"\r",
+					"pm.sendRequest({\r",
+					"    url: pm.globals.get(\"base_url\") + pm.globals.get(\"endpoint\"),\r",
+					"    method: 'POST',\r",
+					"    header: {\r",
+					"        'Content-Type': 'application/json',\r",
+					"        'Accept': 'text/plain'\r",
+					"    },\r",
+					"    body: JSON.stringify(requestBody)\r",
+					"}, function (err, res) {\r",
+					"    if (err) {\r",
+					"        console.error('Login request failed:', err);\r",
+					"    } else {\r",
+					"        if (res.code === 200) {\r",
+					"            try {\r",
+					"                let jsonResponse = res.json();\r",
+					"                console.log(jsonResponse.data.data);\r",
+					"                if (jsonResponse && jsonResponse.data.data.token) {\r",
+					"                    pm.environment.set('token', jsonResponse.data.data.token);\r",
+					"                    console.log('Token saved to environment:', jsonResponse.data.data.token);\r",
+					"                } else {\r",
+					"                    console.error('Response does not contain an access_token:', jsonResponse);\r",
+					"                }\r",
+					"            } catch (parseError) {\r",
+					"                console.error('Failed to parse response:', parseError);\r",
+					"            }\r",
+					"        } else {\r",
+					"            console.error(`Failed to retrieve token. Status Code: ${res.code}`, res);\r",
+					"        }\r",
+					"    }\r",
+					"});\r",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjOGNkN2ViZS01YTdkLTQ5MTAtYTA5Mi00ODJlZmI5YjY3MjIiLCJ1bmlxdWVfbmFtZSI6ImRlcm1ldGVyaW8iLCJyb2xlIjoiTWFuYWdlciIsIm5iZiI6MTc0MTEyMjY0MCwiZXhwIjoxNzQxMTUxNDQwLCJpYXQiOjE3NDExMjI2NDB9.FiaCiFzy2_l4ou3qtjC8PfRIc2iU-2ngy814_zuBiks",
+			"type": "string"
+		},
+		{
+			"key": "base_url",
+			"value": "https://localhost:8081/api",
+			"type": "string"
+		}
+	]
+}

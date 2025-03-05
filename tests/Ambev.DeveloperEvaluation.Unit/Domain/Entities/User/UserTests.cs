@@ -1,9 +1,10 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Entities.User;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
 using Xunit;
 
-namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities;
+namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.User;
 
 /// <summary>
 /// Contains unit tests for the User entity class.
@@ -69,7 +70,7 @@ public class UserTests
     public void Given_InvalidUserData_When_Validated_Then_ShouldReturnInvalid()
     {
         // Arrange
-        var user = new User
+        var user = new DeveloperEvaluation.Domain.Entities.User.User
         {
             Username = "", // Invalid: empty
             Password = UserTestData.GenerateInvalidPassword(), // Invalid: doesn't meet password requirements
