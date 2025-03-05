@@ -30,6 +30,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Product
                 ActualStock = product.ActualStock;
             if (CompanyId != product.CompanyId)
                 CompanyId = product.CompanyId;
+            if (MaxItemsForSale != product.MaxItemsForSale)
+                MaxItemsForSale = product.MaxItemsForSale;
         }
     }
 }

@@ -33,17 +33,14 @@ namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
-            var product = await _productRepository.GetByIdAsync(request.Id);
-            if (product is null)
+            var product = await _productRepository.GetByIdAsync(request.Id) ?? 
                 throw new InvalidOperationException($"Product with Id {request.Id} not found");
 
-            var existsCompany = await _companyRepository.GetByIdAsync(request.CompanyId);
-            if (existsCompany is null)
+            _ = await _companyRepository.GetByIdAsync(request.CompanyId) ??
                 throw new InvalidOperationException($"Company with Id {request.CompanyId} does not exist");
 
-            var existsCategory = await _categoryRepository.GetByIdAsync(request.CategoryId);
-            if (existsCategory is null)
-                throw new InvalidOperationException($"Category with Id {request.CategoryId} does not exist");
+            _ = await _categoryRepository.GetByIdAsync(request.CategoryId) ??
+                                 throw new InvalidOperationException($"Category with Id {request.CategoryId} does not exist");
 
             var productMapper = _mapper.Map<Product>(request);
             product.Update(productMapper);

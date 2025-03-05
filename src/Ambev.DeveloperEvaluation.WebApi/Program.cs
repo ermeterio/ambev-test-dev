@@ -6,6 +6,7 @@ using Ambev.DeveloperEvaluation.Common.Logging;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Entities.Product;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Events.Interface;
 using Ambev.DeveloperEvaluation.Domain.Events.Product;
 using Ambev.DeveloperEvaluation.IoC;

@@ -33,12 +33,10 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
             
-            var existsCompany = await _companyRepository.GetByIdAsync(request.CompanyId);
-            if (existsCompany is null)
-                throw new InvalidOperationException($"Company with Id {request.CompanyId} does not exist");
+            _ = await _companyRepository.GetByIdAsync(request.CompanyId) ??
+                                throw new InvalidOperationException($"Company with Id {request.CompanyId} does not exist");
 
-            var existsCategory = await _categoryRepository.GetByIdAsync(request.CategoryId);
-            if (existsCategory is null)
+            _ = await _categoryRepository.GetByIdAsync(request.CategoryId) ??
                 throw new InvalidOperationException($"Category with Id {request.CategoryId} does not exist");
 
             var existingProduct = await _productRepository.GetByNameAndCategoryAsync(request.Name, request.CategoryId, cancellationToken);
@@ -46,9 +44,8 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
                 throw new InvalidOperationException($"Product with Name {request.Name} already exists");
 
             var product = _mapper.Map<Product>(request);
-            var createdProduct = await _productRepository.AddAsync(product, cancellationToken);
-            if (createdProduct is null)
-                throw new InvalidOperationException("Error creating Product");
+            var createdProduct = await _productRepository.AddAsync(product, cancellationToken) ??
+                                 throw new InvalidOperationException("Error creating Product");
 
             var @event = _mapper.Map<CreateProductEvent>(createdProduct);
             await _bus.Send(@event);

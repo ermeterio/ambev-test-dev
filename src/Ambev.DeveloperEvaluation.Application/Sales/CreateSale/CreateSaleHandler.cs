@@ -29,30 +29,26 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
-            var existsCompany = await _companyRepository.GetByIdAsync(request.CompanyId);
-            if (existsCompany is null)
+            _ = await _companyRepository.GetByIdAsync(request.CompanyId) ?? 
                 throw new InvalidOperationException($"Company with Id {request.CompanyId} does not exist");
 
             var existingSale = await _saleRepository.GetExistingSaleForUser(request.UserId, cancellationToken);
-            if (existingSale is not null)
+            if(existingSale is not null)
                 throw new InvalidOperationException("There is already a sale for the user");
 
             var sale = _mapper.Map<Sale>(request);
 
-            var createdSale = await _saleRepository.AddAsync(sale, cancellationToken);
-            if (createdSale is null)
+            var createdSale = await _saleRepository.AddAsync(sale, cancellationToken) ??
                 throw new InvalidOperationException("Error creating Sale");
 
             var discounts = createdSale.Discounts?.ToList() ?? [];
             foreach (var item in sale.Items!)
             {
-                var product = await _productRepository.GetByIdAsync(item.ProductId);
-                if (product is null)
-                    throw new InvalidOperationException($"Product with Id {item.ProductId} not found");
+                var product = await _productRepository.GetByIdAsync(item.ProductId) ??
+                              throw new InvalidOperationException($"Product with Id {item.ProductId} not found");
 
                 if (product.MaxItemsForSale < item.Quantity)
                 {
-                    await _saleRepository.DeleteAsync(createdSale, cancellationToken);
                     throw new InvalidOperationException($"Product with Id {item.ProductId} has a limit of {product.MaxItemsForSale} items per sale");
                 }
 
@@ -69,11 +65,13 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
                 }
             }
 
-            if (discounts.Any())
+            if (discounts.Count > 0)
             {
                 await _saleRepository.RemoveAllDiscountsForSale(createdSale.Id, cancellationToken);
                 await _saleRepository.AddDiscountsForSale(discounts, cancellationToken);
             }
+
+            await _saleRepository.CommitAsync(cancellationToken);
 
             return _mapper.Map<CreateSaleResult>(createdSale);
         }

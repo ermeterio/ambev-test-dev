@@ -24,15 +24,13 @@ namespace Ambev.DeveloperEvaluation.Application.Categories.CreateCategory
             var validator = new CreateCategoryValidator();
             await validator.ValidateAndThrowAsync(request, cancellationToken);
 
-            var company = _companyRepository.GetByIdAsync(request.CompanyId);
-            if (company is null)
-                throw new InvalidOperationException("Company not found");
+            _ = _companyRepository.GetByIdAsync(request.CompanyId) ??
+                          throw new InvalidOperationException("Company not found");
 
             var category = _mapper.Map<Category>(request);
 
-            var categoryInsert = await _categoryRepository.AddAsync(category, cancellationToken);
-            if(categoryInsert is null)
-                throw new InvalidOperationException("Category not created");
+            var categoryInsert = await _categoryRepository.AddAsync(category, cancellationToken) ??
+                                 throw new InvalidOperationException("Category not created");
 
             return _mapper.Map<CreateCategoryResult>(categoryInsert);
         }

@@ -1,10 +1,10 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
-using Ambev.DeveloperEvaluation.Domain.Entities.Product;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Product.Fixture;
 using AutoMapper;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
+using Rebus.Bus;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Product
@@ -33,12 +33,12 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             mapper.Map<DeveloperEvaluation.Domain.Entities.Product.Product>(Arg.Any<UpdateProductCommand>()).Returns(product);
 
             var companyRepository = Substitute.For<ICompanyRepository>();
-            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+            companyRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
 
             var categoryRepository = Substitute.For<ICategoryRepository>();
-            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
+            categoryRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
 
-            var commandHandler = new UpdateProductHandler(productRepository, Substitute.For<IMapper>(), companyRepository, categoryRepository);
+            var commandHandler = new UpdateProductHandler(productRepository, mapper, companyRepository, categoryRepository, Substitute.For<IBus>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateProductCommand(), CancellationToken.None));
@@ -57,12 +57,12 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             repository.GetByIdAsync(Arg.Any<Guid>()).ReturnsNull();
 
             var companyRepository = Substitute.For<ICompanyRepository>();
-            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+            companyRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
 
             var categoryRepository = Substitute.For<ICategoryRepository>();
-            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
+            categoryRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
 
-            var commandHandler = new UpdateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository);
+            var commandHandler = new UpdateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository, Substitute.For<IBus>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateProductCommand(), CancellationToken.None));
@@ -83,9 +83,9 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
 
             var categoryRepository = Substitute.For<ICategoryRepository>();
-            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
+            categoryRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
 
-            var commandHandler = new UpdateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository);
+            var commandHandler = new UpdateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository, Substitute.For<IBus>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateProductCommand(), CancellationToken.None));

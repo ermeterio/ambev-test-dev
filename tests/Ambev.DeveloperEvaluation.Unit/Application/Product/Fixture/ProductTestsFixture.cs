@@ -21,7 +21,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product.Fixture
                 Description = _faker.Vehicle.Manufacturer(),
                 CompanyId = Guid.NewGuid(),
                 Price = _faker.Random.Decimal(),
-                ActualStock = _faker.Random.Int()
+                ActualStock = _faker.Random.Int(),
+                MaxItemsForSale = 100
             };
 
         public UpdateProductCommand InvalidUpdateProductCommandMock()
@@ -44,7 +45,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product.Fixture
                 Description = _faker.Vehicle.Manufacturer(),
                 CompanyId = Guid.NewGuid(),
                 Price = _faker.Random.Decimal(),
-                ActualStock = _faker.Random.Int()
+                ActualStock = _faker.Random.Int(),
+                MaxItemsForSale = 100
             };
 
         public DeveloperEvaluation.Domain.Entities.Product.Product GetInvalidProduct()
@@ -65,7 +67,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product.Fixture
                 Description = _faker.Vehicle.Manufacturer(),
                 CompanyId = Guid.NewGuid(),
                 Price = _faker.Random.Decimal(),
-                ActualStock = _faker.Random.Int()
+                ActualStock = _faker.Random.Int(),
+                MaxItemsForSale = 100
             };
     }
 }

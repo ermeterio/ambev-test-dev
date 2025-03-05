@@ -28,13 +28,11 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
-            var sale = await _saleRepository.GetByIdAsync(request.Id);
-            if (sale is null)
-                throw new InvalidOperationException($"Sale with Id {request.Id} not found");
+            var sale = await _saleRepository.GetByIdAsync(request.Id) ??
+                       throw new InvalidOperationException($"Sale with Id {request.Id} not found");
 
-            var existsCompany = await _companyRepository.GetByIdAsync(request.CompanyId);
-            if (existsCompany is null)
-                throw new InvalidOperationException($"Company with Id {request.CompanyId} does not exist");
+            _ = await _companyRepository.GetByIdAsync(request.CompanyId) ??
+                                throw new InvalidOperationException($"Company with Id {request.CompanyId} does not exist");
 
             var saleMapper = _mapper.Map<Sale>(request);
             sale.Update(saleMapper);
@@ -42,15 +40,14 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
             await _saleRepository.RemoveAllItemsForSale(sale.Id, cancellationToken);
 
             var updatedSale = await _saleRepository.UpdateAsync(sale, cancellationToken);
-            if(updatedSale is null)
+            if (updatedSale is null)
                 return new() { Success = false };
 
-            var discounts = updatedSale?.Discounts?.ToList() ?? [];
+            var discounts = updatedSale.Discounts?.ToList() ?? [];
             foreach (var item in sale.Items!)
             {
-                var product = await _productRepository.GetByIdAsync(item.ProductId);
-                if (product is null)
-                    throw new InvalidOperationException($"Product with Id {item.ProductId} not found");
+                var product = await _productRepository.GetByIdAsync(item.ProductId) ??
+                              throw new InvalidOperationException($"Product with Id {item.ProductId} not found");
 
                 item.Product = product;
 
@@ -62,21 +59,23 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
                 var discount = await _productRepository.GetDiscountForProductAsync(item.ProductId, item.Quantity, cancellationToken);
                 if (discount is not null)
                 {
-                    discounts.Add(new ()
+                    discounts.Add(new()
                     {
                         DiscountId = discount.Id,
-                        SaleId = updatedSale!.Id
+                        SaleId = updatedSale.Id
                     });
                 }
             }
 
-            if (discounts.Any())
+            if (discounts.Count > 0)
             {
-                await _saleRepository.RemoveAllDiscountsForSale(updatedSale!.Id, cancellationToken);
+                await _saleRepository.RemoveAllDiscountsForSale(updatedSale.Id, cancellationToken);
                 await _saleRepository.AddDiscountsForSale(discounts, cancellationToken);
             }
 
-            return  _mapper.Map<UpdateSaleResult>(updatedSale);
+            await _saleRepository.CommitAsync(cancellationToken);
+
+            return _mapper.Map<UpdateSaleResult>(updatedSale);
         }
     }
 }

@@ -9,5 +9,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         Task RemoveAllDiscountsForSale(Guid saleId, CancellationToken cancellationToken);
         Task RemoveAllItemsForSale(Guid saleId, CancellationToken cancellationToken);
         Task<Sale?> GetCompleteSale(Guid saleId, CancellationToken cancellationToken);
+        Task CommitAsync(CancellationToken cancellationToken);
     }
 }

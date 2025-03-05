@@ -2,6 +2,7 @@
 using Ambev.DeveloperEvaluation.Domain.Entities.Product;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sale;
 using Ambev.DeveloperEvaluation.Domain.Entities.User;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Events.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -30,7 +31,7 @@ public class DefaultContext(DbContextOptions<DefaultContext> options, IDomainEve
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var domainEntities = ChangeTracker.Entries<IEntityWithEvents>()
-            .Where(x => x.Entity.DomainEvents.Any())
+            .Where(x => x.Entity.DomainEvents.Count > 0)
             .Select(x => x.Entity)
             .ToList();
 

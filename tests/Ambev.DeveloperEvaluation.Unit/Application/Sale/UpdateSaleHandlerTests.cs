@@ -36,10 +36,12 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale
                 .Returns(sale);
 
             var companyRepository = Substitute.For<ICompanyRepository>();
-            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+            companyRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
 
-            var commandHandler = new UpdateSaleHandler(saleRepository, mapper, 
-                Substitute.For<IProductRepository>(), companyRepository);
+            var product = Substitute.For<IProductRepository>();
+            product.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidProduct());
+
+            var commandHandler = new UpdateSaleHandler(saleRepository, mapper, product, companyRepository);
             
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateSaleCommandMock(), CancellationToken.None));

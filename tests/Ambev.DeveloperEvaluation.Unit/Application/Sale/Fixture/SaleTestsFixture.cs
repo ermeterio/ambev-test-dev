@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities.Sale;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Bogus;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture
@@ -11,6 +12,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture
     public class SaleTestsFixtureCollection : IClassFixture<SaleTestsFixture>;
     public class SaleTestsFixture
     {
+        private readonly Faker _faker = new();
         public CreateSaleCommand ValidCreateSaleCommandMock()
             => new ()
                 {
@@ -24,6 +26,17 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture
         public IEnumerable<SaleItem> GetSaleItemsMock()
             => [new SaleItem { ProductId = Guid.NewGuid(), Quantity = 1 }];
 
+        public DeveloperEvaluation.Domain.Entities.Product.Product GetValidProduct()
+            => new()
+            {
+                Name = _faker.Vehicle.Model(),
+                CategoryId = Guid.NewGuid(),
+                Description = _faker.Vehicle.Manufacturer(),
+                CompanyId = Guid.NewGuid(),
+                Price = _faker.Random.Decimal(),
+                ActualStock = _faker.Random.Int(),
+                MaxItemsForSale = 100
+            };
         public DeleteSaleCommand ValidDeleteSaleCommandMock()
             => new(Guid.NewGuid());
 

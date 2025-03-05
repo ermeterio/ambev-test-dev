@@ -22,9 +22,8 @@ namespace Ambev.DeveloperEvaluation.Application.Categories.DeleteCategory
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
-            var category = await _categoryRepository.GetByIdAsync(request.Id);
-            if (category is null)
-                throw new InvalidOperationException("Category not found");
+            var category = await _categoryRepository.GetByIdAsync(request.Id) ??
+                           throw new InvalidOperationException("Category not found");
 
             var productsFromCategory = await _productRepository.ExistsProductCategoryAsync(request.Id, cancellationToken);
             if (productsFromCategory)
