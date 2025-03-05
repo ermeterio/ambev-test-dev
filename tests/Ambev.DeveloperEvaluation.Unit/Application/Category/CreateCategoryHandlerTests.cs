@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Category.Fixture;
 using AutoMapper;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.Category
@@ -42,7 +43,11 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category
         {
             //arrange
             var categoryRepository = Substitute.For<ICategoryRepository>();
+            categoryRepository.GetByNameAsync(Arg.Any<string>(), Arg.Any<Guid>()).Returns(_fixture.GetValidCategory());
+
             var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidCompany());
+
             var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>());
 
             //act
@@ -52,9 +57,27 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category
             Assert.NotNull(exceptions);
         }
 
-        [Fact(DisplayName = nameof(Should_Be_Update_Invalid_Category))]
+        [Fact(DisplayName = nameof(Should_Be_Create_Existing_Category))]
         [Trait("Category", nameof(CreateCategoryHandlerTests))]
-        public async Task Should_Be_Update_Invalid_Category()
+        public async Task Should_Be_Create_Not_Found_Company_Category()
+        {
+            //arrange
+            var categoryRepository = Substitute.For<ICategoryRepository>();
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Arg.Any<Guid>()).ReturnsNull();
+
+            var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>());
+
+            //act
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCategoryCommandMock(), CancellationToken.None));
+
+            //assert
+            Assert.NotNull(exceptions);
+        }
+
+        [Fact(DisplayName = nameof(Should_Be_Create_Invalid_Category))]
+        [Trait("Category", nameof(CreateCategoryHandlerTests))]
+        public async Task Should_Be_Create_Invalid_Category()
         {
             //arrange
             var categoryRepository = Substitute.For<ICategoryRepository>();
@@ -62,11 +85,12 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category
             var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>());
 
             //act
-            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCategoryCommandMock(), CancellationToken.None));
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.InvalidCreateCategoryCommandMock(), CancellationToken.None));
 
             //assert
             Assert.NotNull(exceptions);
         }
+       
         #endregion
     }
 }

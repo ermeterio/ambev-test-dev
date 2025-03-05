@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Application.Companies.UpdateCompany;
+﻿using Ambev.DeveloperEvaluation.Application.Companies.CreateCompany;
+using Ambev.DeveloperEvaluation.Application.Companies.UpdateCompany;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture;
 using AutoMapper;
@@ -13,11 +14,9 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
     public class UpdateCompanyHandlerTests
     {
         private readonly CompanyTestsFixture _fixture;
-        private readonly AutoMocker _mocker;
         public UpdateCompanyHandlerTests(CompanyTestsFixture fixture)
         {
             _fixture = fixture;
-            _mocker = new AutoMocker();
         }
         #region Success
         [Fact(DisplayName = nameof(Should_Be_Update_Successful_Company))]
@@ -69,6 +68,40 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateCompanyCommand(), CancellationToken.None));
+
+            //assert
+            Assert.NotNull(exceptions);
+        }
+
+        [Fact(DisplayName = nameof(Should_Be_Update_Invalid_Company_With_No_Name))]
+        [Trait("Company", nameof(CreateCompanyHandlerTests))]
+        public async Task Should_Be_Update_Invalid_Company_With_No_Name()
+        {
+            //arrange
+            var company = _fixture.GetInvalidCompanyWithNotName();
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
+            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+
+            //act
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCompanyCommand(), CancellationToken.None));
+
+            //assert
+            Assert.NotNull(exceptions);
+        }
+
+        [Fact(DisplayName = nameof(Should_Be_Update_Invalid_Company_With_Invalid_Cnpj))]
+        [Trait("Company", nameof(CreateCompanyHandlerTests))]
+        public async Task Should_Be_Update_Invalid_Company_With_Invalid_Cnpj()
+        {
+            //arrange
+            var company = _fixture.GetInvalidCompanyWithInvalidCnpj();
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
+            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+
+            //act
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.InvalidCreateCompanyCommandWithNoName(), CancellationToken.None));
 
             //assert
             Assert.NotNull(exceptions);

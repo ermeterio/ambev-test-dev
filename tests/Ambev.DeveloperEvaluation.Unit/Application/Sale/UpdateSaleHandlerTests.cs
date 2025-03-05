@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
+﻿using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture;
@@ -83,6 +84,54 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale
             companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
             var commandHandler = new UpdateSaleHandler(saleRepository, Substitute.For<IMapper>(), 
                 Substitute.For<IProductRepository>(), companyRepository);
+
+            //act
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateSaleCommandMock(), CancellationToken.None));
+
+            //assert
+            Assert.NotNull(exceptions);
+        }
+
+        [Fact(DisplayName = nameof(Should_Be_Update_Sale_With_Not_Found_Product))]
+        [Trait("Sale", nameof(UpdateSaleHandlerTests))]
+        public async Task Should_Be_Update_Sale_With_Not_Found_Product()
+        {
+            //arrange
+            var sale = _fixture.GetInvalidSale();
+            var saleRepository = Substitute.For<ISaleRepository>();
+            saleRepository.GetExistingSaleForUser(Arg.Any<Guid>(), CancellationToken.None).Returns(sale);
+
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+
+            var productRepository = Substitute.For<IProductRepository>();
+            productRepository.GetByIdAsync(Arg.Any<Guid>()).ReturnsNull();
+
+            var commandHandler = new UpdateSaleHandler(saleRepository, Substitute.For<IMapper>(), productRepository, companyRepository);
+
+            //act
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateSaleCommandMock(), CancellationToken.None));
+
+            //assert
+            Assert.NotNull(exceptions);
+        }
+
+        [Fact(DisplayName = nameof(Should_Be_Update_Sale_With_Empty_Items))]
+        [Trait("Sale", nameof(UpdateSaleHandlerTests))]
+        public async Task Should_Be_Update_Sale_With_Empty_Items()
+        {
+            //arrange
+            var sale = _fixture.GetInvalidSaleWithoutItems();
+            var saleRepository = Substitute.For<ISaleRepository>();
+            saleRepository.GetExistingSaleForUser(Arg.Any<Guid>(), CancellationToken.None).Returns(sale);
+
+            var companyRepository = Substitute.For<ICompanyRepository>();
+            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
+
+            var productRepository = Substitute.For<IProductRepository>();
+            productRepository.GetByIdAsync(Arg.Any<Guid>()).ReturnsNull();
+
+            var commandHandler = new UpdateSaleHandler(saleRepository, Substitute.For<IMapper>(), productRepository, companyRepository);
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateSaleCommandMock(), CancellationToken.None));
