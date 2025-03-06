@@ -1,8 +1,10 @@
-﻿using Ambev.DeveloperEvaluation.Application.Companies.CreateCompany;
+﻿using Ambev.DeveloperEvaluation.Application.Categories.CreateCategory;
+using Ambev.DeveloperEvaluation.Application.Companies.CreateCompany;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture;
 using AutoMapper;
 using Bogus;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
@@ -22,9 +24,10 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
         public async Task Should_Be_Create_Successful_Company()
         {
             //arrange
+
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.AddAsync(Arg.Any<DeveloperEvaluation.Domain.Entities.Company.Company>()).Returns(_fixture.GetValidCompany());
-            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<CreateCompanyHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCompanyCommand(), CancellationToken.None));
@@ -43,7 +46,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             var company = _fixture.GetValidCompany();
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
-            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<CreateCompanyHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCompanyCommand(), CancellationToken.None));
@@ -60,7 +63,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             var company = _fixture.GetInvalidCompanyWithNotName();
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
-            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<CreateCompanyHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCompanyCommand(), CancellationToken.None));
@@ -77,7 +80,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             var company = _fixture.GetInvalidCompanyWithInvalidCnpj();
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
-            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<CreateCompanyHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.InvalidCreateCompanyCommandWithNoName(), CancellationToken.None));

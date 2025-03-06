@@ -1,8 +1,10 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Companies.CreateCompany;
+using Ambev.DeveloperEvaluation.Application.Companies.DeleteCompany;
 using Ambev.DeveloperEvaluation.Application.Companies.UpdateCompany;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Moq.AutoMock;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -30,7 +32,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
                 .Returns(_fixture.GetValidCompany());
             companyRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidCompany());
             companyRepository.UpdateAsync(Arg.Any<DeveloperEvaluation.Domain.Entities.Company.Company>(), Arg.Any<CancellationToken>()).Returns(_fixture.GetValidCompany());
-            var commandHandler = new UpdateCompanyHandler(companyRepository, mapper);
+            var commandHandler = new UpdateCompanyHandler(companyRepository, mapper, Substitute.For<ILogger<UpdateCompanyHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateCompanyCommand(), CancellationToken.None));
@@ -47,7 +49,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             //arrange
             var repository = Substitute.For<ICompanyRepository>();
             repository.GetByIdAsync(Arg.Any<Guid>()).ReturnsNull();
-            var commandHandler = new UpdateCompanyHandler(repository, Substitute.For<IMapper>());
+            var commandHandler = new UpdateCompanyHandler(repository, Substitute.For<IMapper>(), Substitute.For<ILogger<UpdateCompanyHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateCompanyCommand(), CancellationToken.None));
@@ -64,7 +66,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             var company = _fixture.GetInvalidCompany();
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
-            var commandHandler = new UpdateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new UpdateCompanyHandler(companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<UpdateCompanyHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateCompanyCommand(), CancellationToken.None));
@@ -81,10 +83,10 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             var company = _fixture.GetInvalidCompanyWithNotName();
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
-            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new UpdateCompanyHandler(companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<UpdateCompanyHandler>>());
 
             //act
-            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCompanyCommand(), CancellationToken.None));
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateCompanyCommand(), CancellationToken.None));
 
             //assert
             Assert.NotNull(exceptions);
@@ -98,10 +100,10 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             var company = _fixture.GetInvalidCompanyWithInvalidCnpj();
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByCnpjAsync(company.Cnpj, CancellationToken.None).Returns(company);
-            var commandHandler = new CreateCompanyHandler(companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new UpdateCompanyHandler(companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<UpdateCompanyHandler>>());
 
             //act
-            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.InvalidCreateCompanyCommandWithNoName(), CancellationToken.None));
+            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.InvalidUpdateCompanyCommandWithNoName(), CancellationToken.None));
 
             //assert
             Assert.NotNull(exceptions);

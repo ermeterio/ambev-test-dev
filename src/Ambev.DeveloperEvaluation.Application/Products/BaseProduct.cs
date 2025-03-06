@@ -4,6 +4,7 @@ namespace Ambev.DeveloperEvaluation.Application.Products
 {
     public class BaseProduct
     {
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public Guid CategoryId { get; set; }

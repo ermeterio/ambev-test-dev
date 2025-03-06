@@ -56,5 +56,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture
         public DeveloperEvaluation.Domain.Entities.Company.Company GetInvalidCompanyWithInvalidCnpj()
             => new(string.Empty, null, "123456");
 
+        public UpdateCompanyCommand InvalidUpdateCompanyCommandWithNoName()
+            => new() {Name = string.Empty, Cnpj = "84329228000110"};
     }
 }

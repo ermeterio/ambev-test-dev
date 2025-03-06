@@ -24,7 +24,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
             builder.HasOne(d => d.Product).WithMany(p => p.Discounts)
                 .HasForeignKey(d => d.ProductId).IsRequired();
 
-            builder.HasIndex(d => new { d.ProductId, d.Quantity }).IsUnique();
+            builder.HasIndex(d => new { d.ProductId, d.CompanyId, d.Quantity, d.StartDate, d.EndDate }).IsUnique();
         }
     }
 }

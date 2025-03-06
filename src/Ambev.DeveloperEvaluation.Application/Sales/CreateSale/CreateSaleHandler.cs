@@ -1,8 +1,10 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities.Sale;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities.Product;
+using Ambev.DeveloperEvaluation.Domain.Entities.Sale;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
 {
@@ -10,15 +12,17 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
     {
         private readonly IMapper _mapper;
         private readonly ISaleRepository _saleRepository;
+        private readonly ILogger<CreateSaleHandler> _logger;
         private readonly ICompanyRepository _companyRepository;
         private readonly IProductRepository _productRepository;
 
-        public CreateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IProductRepository productRepository, ICompanyRepository companyRepository)
+        public CreateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IProductRepository productRepository, ICompanyRepository companyRepository, ILogger<CreateSaleHandler> logger)
         {
             _mapper = mapper;
             _saleRepository = saleRepository;
             _productRepository = productRepository;
             _companyRepository = companyRepository;
+            _logger = logger;
         }
 
         public async Task<CreateSaleResult> Handle(CreateSaleCommand request, CancellationToken cancellationToken)
@@ -37,6 +41,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
                 throw new InvalidOperationException("There is already a sale for the user");
 
             var sale = _mapper.Map<Sale>(request);
+
+            _logger.LogInformation("Creating sale {@Sale}", sale);
 
             var createdSale = await _saleRepository.AddAsync(sale, cancellationToken) ??
                 throw new InvalidOperationException("Error creating Sale");
@@ -57,6 +63,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
                 var discount = await _productRepository.GetDiscountForProductAsync(item.ProductId, item.Quantity, cancellationToken);
                 if (discount is not null)
                 {
+                    _logger.LogInformation("Creating discount {@discount}", discount);
+
                     discounts.Add(new()
                     {
                         DiscountId = discount.Id,

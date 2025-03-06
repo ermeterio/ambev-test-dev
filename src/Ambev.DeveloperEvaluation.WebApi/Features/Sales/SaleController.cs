@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+﻿using System.Security.Claims;
+using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
@@ -42,6 +43,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateSaleRequest request, CancellationToken cancellationToken)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; 
             var validator = new CreateSaleRequestValidator();
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -49,6 +51,15 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
                 return BadRequest(validationResult.Errors);
 
             var command = _mapper.Map<CreateSaleCommand>(request);
+            if (userId is not null)
+            {
+                command.UserId = new Guid(userId);
+            }
+            else
+            {
+                throw new OperationCanceledException("User not found");
+            }
+            
             var response = await _mediator.Send(command, cancellationToken);
 
             return Created(string.Empty, new ApiResponseWithData<CreateSaleResponse>

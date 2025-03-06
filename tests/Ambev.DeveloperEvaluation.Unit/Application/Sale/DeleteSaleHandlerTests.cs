@@ -1,6 +1,8 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
+﻿using Ambev.DeveloperEvaluation.Application.Categories.DeleteCategory;
+using Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Sale.Fixture;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
@@ -23,7 +25,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale
             var saleRepository = Substitute.For<ISaleRepository>();
             saleRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidSale());
             saleRepository.DeleteAsync(Arg.Any<DeveloperEvaluation.Domain.Entities.Sale.Sale>()).Returns(true);
-            var commandHandler = new DeleteSaleHandler(saleRepository);
+            var commandHandler = new DeleteSaleHandler(saleRepository, Substitute.For<ILogger<DeleteSaleHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidDeleteSaleCommandMock(), CancellationToken.None));
@@ -39,7 +41,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Sale
         {
             //arrange
             var saleRepository = Substitute.For<ISaleRepository>();
-            var commandHandler = new DeleteSaleHandler(saleRepository);
+            var commandHandler = new DeleteSaleHandler(saleRepository, Substitute.For<ILogger<DeleteSaleHandler>>());
             saleRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidSale());
 
             //act
