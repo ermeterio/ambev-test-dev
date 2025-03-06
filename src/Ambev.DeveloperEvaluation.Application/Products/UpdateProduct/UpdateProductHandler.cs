@@ -4,6 +4,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Rebus.Bus;
 
 namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct
@@ -13,16 +14,18 @@ namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct
         private readonly ICategoryRepository _categoryRepository;
         private readonly IProductRepository _productRepository;
         private readonly ICompanyRepository _companyRepository;
+        private readonly ILogger<UpdateProductHandler> _logger;
         private readonly IMapper _mapper;
         private readonly IBus _bus;
 
-        public UpdateProductHandler(IProductRepository productRepository, IMapper mapper, ICompanyRepository companyRepository, ICategoryRepository categoryRepository, IBus bus)
+        public UpdateProductHandler(IProductRepository productRepository, IMapper mapper, ICompanyRepository companyRepository, ICategoryRepository categoryRepository, IBus bus, ILogger<UpdateProductHandler> logger)
         {
             _productRepository = productRepository;
             _mapper = mapper;
             _companyRepository = companyRepository;
             _categoryRepository = categoryRepository;
             _bus = bus;
+            _logger = logger;
         }
 
         public async Task<UpdateProductResult> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -44,6 +47,8 @@ namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct
 
             var productMapper = _mapper.Map<Product>(request);
             product.Update(productMapper);
+
+            _logger.LogInformation("Updating product {@Product}", product);
 
             var updatedProduct = await _productRepository.UpdateAsync(product, cancellationToken);
 

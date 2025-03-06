@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities.Product;
+﻿using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Entities.Product;
 
 namespace Ambev.DeveloperEvaluation.Domain.Repositories
 {
@@ -8,5 +9,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         Task<Discount?> GetDiscountForProductAsync(Guid productId, int quantity,
             CancellationToken cancellationToken);
         Task<bool> ExistsProductCategoryAsync(Guid categoryId, CancellationToken cancellationToken);
+        Task<(IEnumerable<Product>, PaginatedFilter)> GetProductsByFilterAsync(Product productFilter, PaginatedFilter paginatedFilter, CancellationToken cancellationToken);
     }
 }

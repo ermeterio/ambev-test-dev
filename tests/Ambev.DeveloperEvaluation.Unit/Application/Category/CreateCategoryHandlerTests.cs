@@ -2,6 +2,8 @@
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Category.Fixture;
 using AutoMapper;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Xunit;
@@ -26,7 +28,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category
             categoryRepository.AddAsync(Arg.Any<DeveloperEvaluation.Domain.Entities.Product.Category>()).Returns(_fixture.GetValidCategory());
 
             var companyRepository = Substitute.For<ICompanyRepository>();
-            var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<CreateCategoryHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCategoryCommandMock(), CancellationToken.None));
@@ -48,7 +50,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidCompany());
 
-            var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<CreateCategoryHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCategoryCommandMock(), CancellationToken.None));
@@ -66,7 +68,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByIdAsync(Arg.Any<Guid>()).ReturnsNull();
 
-            var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>(), Substitute.For<ILogger<CreateCategoryHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidCreateCategoryCommandMock(), CancellationToken.None));
@@ -80,9 +82,11 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category
         public async Task Should_Be_Create_Invalid_Category()
         {
             //arrange
+            var loggerMock = Substitute.For<ILogger<CreateCategoryHandler>>();
+
             var categoryRepository = Substitute.For<ICategoryRepository>();
             var companyRepository = Substitute.For<ICompanyRepository>();
-            var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>());
+            var commandHandler = new CreateCategoryHandler(categoryRepository, companyRepository, Substitute.For<IMapper>(), loggerMock);
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.InvalidCreateCategoryCommandMock(), CancellationToken.None));
@@ -90,7 +94,6 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Category
             //assert
             Assert.NotNull(exceptions);
         }
-       
         #endregion
     }
 }
