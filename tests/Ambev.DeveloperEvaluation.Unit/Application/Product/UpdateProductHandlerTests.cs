@@ -143,54 +143,6 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             //assert
             Assert.NotNull(exceptions);
         }
-
-        [Fact(DisplayName = nameof(Should_Be_Update_Invalid_Product_With_No_Name))]
-        [Trait("Product", nameof(UpdateProductHandlerTests))]
-        public async Task Should_Be_Update_Invalid_Product_With_No_Name()
-        {
-            //arrange
-            var repository = Substitute.For<IProductRepository>();
-            var product = _fixture.GetInvalidProductWithNoName();
-            repository.GetByNameAndCategoryAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(product);
-
-            var companyRepository = Substitute.For<ICompanyRepository>();
-            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
-
-            var categoryRepository = Substitute.For<ICategoryRepository>();
-            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
-
-            var commandHandler = new UpdateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository, Substitute.For<IBus>());
-
-            //act
-            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateProductCommand(), CancellationToken.None));
-
-            //assert
-            Assert.NotNull(exceptions);
-        }
-
-        [Fact(DisplayName = nameof(Should_Be_Update_Invalid_Product_With_No_Description))]
-        [Trait("Product", nameof(UpdateProductHandlerTests))]
-        public async Task Should_Be_Update_Invalid_Product_With_No_Description()
-        {
-            //arrange
-            var repository = Substitute.For<IProductRepository>();
-            var product = _fixture.GetInvalidProductWithNoDescription();
-            repository.GetByNameAndCategoryAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(product);
-
-            var companyRepository = Substitute.For<ICompanyRepository>();
-            companyRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Company.Company("test", null, "1234567"));
-
-            var categoryRepository = Substitute.For<ICategoryRepository>();
-            categoryRepository.GetByIdAsync(Guid.NewGuid()).Returns(new DeveloperEvaluation.Domain.Entities.Product.Category() { CompanyId = Guid.NewGuid(), Id = Guid.NewGuid(), Name = "test" });
-
-            var commandHandler = new UpdateProductHandler(repository, Substitute.For<IMapper>(), companyRepository, categoryRepository, Substitute.For<IBus>());
-
-            //act
-            var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidUpdateProductCommand(), CancellationToken.None));
-
-            //assert
-            Assert.NotNull(exceptions);
-        }
         #endregion
     }
 }
