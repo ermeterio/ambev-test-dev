@@ -1,6 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Product.Fixture;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             var productRepository = Substitute.For<IProductRepository>();
             productRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidProduct());
             productRepository.DeleteAsync(Arg.Any<DeveloperEvaluation.Domain.Entities.Product.Product>(), Arg.Any<CancellationToken>()).Returns(true);
-            var commandHandler = new DeleteProductHandler(productRepository);
+            var commandHandler = new DeleteProductHandler(productRepository, Substitute.For<ILogger<DeleteProductHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(_fixture.ValidDeleteProductCommandMock(), CancellationToken.None));
@@ -40,7 +41,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product
             //arrange
             var productRepository = Substitute.For<IProductRepository>();
             productRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidProduct());
-            var commandHandler = new DeleteProductHandler(productRepository);
+            var commandHandler = new DeleteProductHandler(productRepository, Substitute.For<ILogger<DeleteProductHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(new DeleteProductCommand(new Guid()), CancellationToken.None));

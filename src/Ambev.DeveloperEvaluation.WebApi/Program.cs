@@ -102,17 +102,17 @@ public class Program
 
                 builder.Services.AddRebus(
                     configure =>        
-                         configure.Routing(r => r.TypeBased().MapAssemblyOf<ApplicationLayer>(rabbitMqSettings.QueueName))
+                         configure.Routing(r =>
+                             {
+                                 r.TypeBased().MapAssemblyOf<CreateProductEvent>(rabbitMqSettings.QueueName);
+                             })
                         .Transport(t => t.UseRabbitMq(rabbitMqSettings.Connection, inputQueueName: rabbitMqSettings.QueueName))
                         .Sagas(s => s.StoreInPostgres(builder.Configuration.GetConnectionString("DefaultConnection"),
                                                                                 dataTableName: "Sagas",
                                                                                 indexTableName: "SagaIndexes"))
                         .Timeouts(t =>
                                     t.StoreInPostgres(builder.Configuration.GetConnectionString("DefaultConnection"),
-                                    tableName: "Timeouts")),
-                        onCreated: bus => Task.WhenAll(
-                            EventsModuleInitializer.Initialize(bus)
-                        ));
+                                    tableName: "Timeouts")));
             }
 
             builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();

@@ -1,6 +1,8 @@
-﻿using Ambev.DeveloperEvaluation.Application.Companies.DeleteCompany;
+﻿using Ambev.DeveloperEvaluation.Application.Companies.CreateCompany;
+using Ambev.DeveloperEvaluation.Application.Companies.DeleteCompany;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.Company.Fixture;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
@@ -24,7 +26,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             companyRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidCompany());
             companyRepository.DeleteAsync(Arg.Any<DeveloperEvaluation.Domain.Entities.Company.Company>())
                 .Returns(true);
-            var commandHandler = new DeleteCompanyHandler(companyRepository);
+            var commandHandler = new DeleteCompanyHandler(companyRepository, Substitute.For<ILogger<DeleteCompanyHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(new DeleteCompanyCommand(Guid.NewGuid()), CancellationToken.None));
@@ -42,7 +44,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Company
             //arrange
             var companyRepository = Substitute.For<ICompanyRepository>();
             companyRepository.GetByIdAsync(Arg.Any<Guid>()).Returns(_fixture.GetValidCompany());
-            var commandHandler = new DeleteCompanyHandler(companyRepository);
+            var commandHandler = new DeleteCompanyHandler(companyRepository, Substitute.For<ILogger<DeleteCompanyHandler>>());
 
             //act
             var exceptions = await Record.ExceptionAsync(() => commandHandler.Handle(new DeleteCompanyCommand(new Guid()), CancellationToken.None));
