@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
 {
@@ -10,12 +11,14 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
     {
         private readonly IProductRepository _productRepository;
         private readonly ICompanyRepository _companyRepository;
+        private readonly ILogger<UpdateSaleHandler> _logger;
         private readonly ISaleRepository _saleRepository;
         private readonly IMapper _mapper;
-        public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IProductRepository productRepository, ICompanyRepository companyRepository)
+        public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IProductRepository productRepository, ICompanyRepository companyRepository, ILogger<UpdateSaleHandler> logger)
         {
             _productRepository = productRepository;
             _companyRepository = companyRepository;
+            _logger = logger;
             _saleRepository = saleRepository;
             _mapper = mapper;
         }
@@ -36,6 +39,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
 
             var saleMapper = _mapper.Map<Sale>(request);
             sale.Update(saleMapper);
+
+            _logger.LogInformation("Updating sale {@Sale}", sale);
 
             await _saleRepository.RemoveAllItemsForSale(sale.Id, cancellationToken);
 
@@ -59,6 +64,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale
                 var discount = await _productRepository.GetDiscountForProductAsync(item.ProductId, item.Quantity, cancellationToken);
                 if (discount is not null)
                 {
+                    _logger.LogInformation("Updating discount {@discount}", discount);
                     discounts.Add(new()
                     {
                         DiscountId = discount.Id,

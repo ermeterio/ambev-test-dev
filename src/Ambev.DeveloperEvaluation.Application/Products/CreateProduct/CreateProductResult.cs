@@ -1,7 +1,4 @@
 ﻿namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct
 {
-    public class CreateProductResult : BaseProduct
-    {
-        public Guid Id { get; set; }
-    }
+    public class CreateProductResult : BaseProduct;
 }

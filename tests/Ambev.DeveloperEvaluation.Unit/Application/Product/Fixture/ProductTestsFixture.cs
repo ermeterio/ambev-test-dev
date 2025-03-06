@@ -1,6 +1,9 @@
-﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+﻿using Ambev.DeveloperEvaluation.Application.Products.CreateDiscount;
+using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Products.DeleteDiscount;
 using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
+using Ambev.DeveloperEvaluation.Domain.Entities.Product;
 using Bogus;
 using Xunit;
 
@@ -89,5 +92,29 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Product.Fixture
                 ActualStock = _faker.Random.Int(),
                 MaxItemsForSale = 100
             };
+
+        public Discount GetValidDiscount()
+            => new ()
+            {
+                CompanyId = Guid.NewGuid(),
+                ProductId = Guid.NewGuid(),
+                StartDate = DateTime.Now.AddMonths(-3),
+                EndDate = DateTime.Now.AddMonths(3),
+                Quantity = 10,
+                Value = 100
+            };
+
+        public CreateDiscountCommand ValidCreateDiscountCommandMock()
+            => new ()
+            {
+                Quantity = 10,
+                Value = 100,
+                ProductId = Guid.NewGuid(),
+                StartDate = DateTime.Now.AddMonths(-3),
+                EndDate = DateTime.Now.AddMonths(3)
+            };
+        
+        public DeleteDiscountCommand ValidDeleteDiscountCommandMock()
+            => new(Guid.NewGuid());
     }
 }

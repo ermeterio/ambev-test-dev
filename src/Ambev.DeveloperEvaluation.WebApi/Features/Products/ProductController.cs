@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.DeleteDiscount;
 using Ambev.DeveloperEvaluation.Application.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetProducts;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateDiscount;
@@ -10,11 +11,13 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.DeleteDiscount;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.DeleteProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.GetProducts;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.UpdateProduct;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
 
@@ -127,6 +130,38 @@ public class ProductController : BaseController
             Success = true,
             Message = "Product retrieved successfully",
             Data = _mapper.Map<GetProductResponse>(response)
+        });
+    }
+
+
+    /// <summary>
+    /// Retrieves a Product by filters
+    /// </summary>
+    /// <param name="request">Filters of the Product</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The Product details if found</returns>
+    [AllowAnonymous]
+    [HttpGet("GetByFilters")]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetProductsResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetProductsByFilters(GetProductsRequest request, CancellationToken cancellationToken)
+    {
+        var command = _mapper.Map<GetProductsCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        if (!response.Products.Any())
+            return NotFound(new ApiResponseWithData<GetProductsResult>
+            {
+                Success = false,
+                Message = "Not found",
+            });
+
+        return Ok(new ApiResponseWithData<GetProductsResult>
+        {
+            Success = true,
+            Message = "Product retrieved successfully",
+            Data = response
         });
     }
 
