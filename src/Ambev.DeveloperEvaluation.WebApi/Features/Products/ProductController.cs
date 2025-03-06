@@ -140,7 +140,7 @@ public class ProductController : BaseController
     /// <param name="request">Filters of the Product</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The Product details if found</returns>
-    [AllowAnonymous]
+    [Authorize]
     [HttpGet("GetByFilters")]
     [ProducesResponseType(typeof(ApiResponseWithData<GetProductsResult>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
