@@ -2,7 +2,7 @@
 {
     public class GetProductsResult
     {
-        public IEnumerable<BaseProduct> Products { get; set; } = [];
+        public IEnumerable<BaseProduct> Products { get; set; } = new List<BaseProduct>();
         public int TotalPages { get; set; }
         public int CurrentPage { get; set; } = 1;
         public int TotalItems { get; set; }
