@@ -2,5 +2,5 @@
 
 namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct
 {
-    public class UpdateProductCommand : BaseProduct, IRequest<UpdateProductResult>;
+    public class UpdateProductCommand : BaseProduct, IRequest<UpdateProductResult>{}
 }
