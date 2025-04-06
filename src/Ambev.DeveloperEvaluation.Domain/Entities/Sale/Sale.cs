@@ -26,5 +26,24 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities.Sale
             if (Status != sale.Status)
                 Status = sale.Status;
         }
+
+        public bool IsValid()
+        {
+            if (Items == null || !Items.Any())
+                return false;
+            
+            if(User is null)
+                return false;
+
+            if(Company is null)
+                return false;
+
+            return true;
+        }
+
+        public void Cancel()
+        {
+            Status = SaleStatus.Canceled;
+        }
     }
 }
