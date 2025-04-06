@@ -99,12 +99,6 @@
 - Utilize esse endpoint para obter produtos com suporte a paginação.
 - Antes de realizar as chamadas subsequentes, consulte no banco de dados as **chaves de empresa, categoria e produto**.
 
----
-
-### **Observações**
-- Certifique-se de que os endpoints estão corretamente configurados na API.
-- Utilize uma ferramenta como **Postman** ou **Swagger** para testar as requisições.
-- Confirme os **IDs de empresa, categoria e produto** antes de realizar os cadastros dependentes.
 
 ---
 
