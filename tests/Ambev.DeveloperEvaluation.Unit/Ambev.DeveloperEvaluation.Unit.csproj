@@ -6,6 +6,10 @@
 
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Domain\Entities\Sale\SaleItemTestData.cs" />
+	  <Compile Remove="Domain\Entities\TestData\SaleItemTestData.cs" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
@@ -42,7 +46,10 @@
 	<ItemGroup>
 	  <Folder Include="Domain\Entities\Company\" />
 	  <Folder Include="Domain\Entities\Product\" />
-	  <Folder Include="Domain\Entities\Sale\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Domain\Entities\TestData\SaleItemTestData.cs" />
 	</ItemGroup>
 
 </Project>
